@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.278158578733188,
+        "y": 3.033366730556411
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.913375000000001,
+        "y": 1.9141249999999992
+      },
+      "isLocked": false,
+      "linkedName": "3R Lineup End"
+    },
+    {
+      "anchor": {
+        "x": 1.5919184347257151,
+        "y": 1.7902286613845753
+      },
+      "prevControl": {
+        "x": 2.024192751974261,
+        "y": 2.363951625564972
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SR Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0.2,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Reef to Station",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -59.99999999999999
+  },
+  "useDefaultConstraints": true
+}

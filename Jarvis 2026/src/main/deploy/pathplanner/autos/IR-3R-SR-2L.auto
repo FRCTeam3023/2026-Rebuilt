@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Target L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IR-3R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3R Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3R-SR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SR Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SR-2L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2L Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Right Autos",
+  "choreoAuto": false
+}

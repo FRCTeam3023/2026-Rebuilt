@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.761,
+        "y": 1.904375
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.277066269798701,
+        "y": 1.499527814476325
+      },
+      "isLocked": false,
+      "linkedName": "IR"
+    },
+    {
+      "anchor": {
+        "x": 5.710903532608696,
+        "y": 2.2425781249999988
+      },
+      "prevControl": {
+        "x": 5.862956830700392,
+        "y": 1.9673252118995626
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "3R Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Pivot",
+      "waypointRelativePos": 0.275058275058275,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Move Elevator",
+      "waypointRelativePos": 0.45454545454545464,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -59.99999999999999
+  },
+  "reversed": false,
+  "folder": "Init Right",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

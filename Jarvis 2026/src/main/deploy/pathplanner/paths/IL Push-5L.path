@@ -1,0 +1,83 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.77350543478261,
+        "y": 6.147214673913043
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.678124999999999,
+        "y": 4.788043478260868
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.159364198247377,
+        "y": 6.468149780037006
+      },
+      "prevControl": {
+        "x": 7.261302505708235,
+        "y": 6.126968506086381
+      },
+      "nextControl": {
+        "x": 6.816185180818922,
+        "y": 7.616748940409785
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.686518563221561,
+        "y": 5.811592020975261
+      },
+      "prevControl": {
+        "x": 6.05278695837604,
+        "y": 6.450640646494739
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "5L Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Elevator",
+      "waypointRelativePos": 1.19,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Move Pivot",
+      "waypointRelativePos": 1.1945360339142683,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": "Init Left",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 43.04749095060047
+  },
+  "useDefaultConstraints": true
+}

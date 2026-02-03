@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.733705523733716,
+        "y": 3.88367204317356
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.985161283491759,
+        "y": 3.903211133652763
+      },
+      "isLocked": false,
+      "linkedName": "IC"
+    },
+    {
+      "anchor": {
+        "x": 6.7,
+        "y": 3.88367204317356
+      },
+      "prevControl": {
+        "x": 7.691152636995998,
+        "y": 3.871846005077638
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "4L Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Pivot",
+      "waypointRelativePos": 0.3137070183702306,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Move Elevator",
+      "waypointRelativePos": 0.3410268487988672,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Init Center",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

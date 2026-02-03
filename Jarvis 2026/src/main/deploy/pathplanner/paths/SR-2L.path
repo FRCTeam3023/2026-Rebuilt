@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.9430906584491835,
+        "y": 0.8684940744070935
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.4649849370127457,
+        "y": 1.596474980463702
+      },
+      "isLocked": false,
+      "linkedName": "SR Lineup End"
+    },
+    {
+      "anchor": {
+        "x": 3.3295575413088203,
+        "y": 2.324065671363692
+      },
+      "prevControl": {
+        "x": 2.972914212012574,
+        "y": 1.7064031718232577
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "2L Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Pivot",
+      "waypointRelativePos": 0.5133093525179865,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Move Elevator",
+      "waypointRelativePos": 0.5931654676259002,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -119.99999999999999
+  },
+  "reversed": false,
+  "folder": "Station to Reef",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -126.0
+  },
+  "useDefaultConstraints": true
+}

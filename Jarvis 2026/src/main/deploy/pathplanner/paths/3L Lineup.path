@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.388994565217392,
+        "y": 2.1233525815217376
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.263994565217392,
+        "y": 2.339858932467848
+      },
+      "isLocked": false,
+      "linkedName": "3L Lineup Start"
+    },
+    {
+      "anchor": {
+        "x": 4.994796304774982,
+        "y": 2.8653275361203523
+      },
+      "prevControl": {
+        "x": 5.119796304774982,
+        "y": 2.6488211851742425
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "3L Lineup End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -59.99999999999999
+  },
+  "reversed": false,
+  "folder": "Lineup Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -59.99999999999999
+  },
+  "useDefaultConstraints": false
+}

@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.742602256749032,
+        "y": 3.88367204317356
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.0005,
+        "y": 3.873875
+      },
+      "isLocked": false,
+      "linkedName": "4L Lineup End"
+    },
+    {
+      "anchor": {
+        "x": 5.25525,
+        "y": 2.1042499999999995
+      },
+      "prevControl": {
+        "x": 6.134722450409218,
+        "y": 2.580199796692047
+      },
+      "nextControl": {
+        "x": 4.4265,
+        "y": 1.6557499999999996
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5919184347257151,
+        "y": 1.7902286613845753
+      },
+      "prevControl": {
+        "x": 2.0826927519742604,
+        "y": 2.485826625564972
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SR Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0.2,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Reef to Station",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

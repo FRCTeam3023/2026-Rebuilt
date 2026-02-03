@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Target L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IL Push-5L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5L Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5L-SL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SL Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SL-6R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6R Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Left Autos",
+  "choreoAuto": false
+}
