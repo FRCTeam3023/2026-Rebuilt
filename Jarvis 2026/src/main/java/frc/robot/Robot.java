@@ -32,25 +32,8 @@ public class Robot extends TimedRobot
     m_robotContainer = new RobotContainer();
 
     // Port forwarding for Limelights
-    PortForwarder.add(5801, "172.29.0.1", 5801);
-    PortForwarder.add(5802, "172.29.0.1", 5802);
-    PortForwarder.add(5803, "172.29.0.1", 5803);
-    PortForwarder.add(5804, "172.29.0.1", 5804);
-    PortForwarder.add(5805, "172.29.0.1", 5805);
-    PortForwarder.add(5806, "172.29.0.1", 5806);
-    PortForwarder.add(5807, "172.29.0.1", 5807);
-    PortForwarder.add(5808, "172.29.0.1", 5808);
-    PortForwarder.add(5809, "172.29.0.1", 5809);
-
-    PortForwarder.add(5811, "172.29.1.1", 5801);
-    PortForwarder.add(5812, "172.29.1.1", 5802);
-    PortForwarder.add(5813, "172.29.1.1", 5803);
-    PortForwarder.add(5814, "172.29.1.1", 5804);
-    PortForwarder.add(5815, "172.29.1.1", 5805);
-    PortForwarder.add(5816, "172.29.1.1", 5806);
-    PortForwarder.add(5817, "172.29.1.1", 5807);
-    PortForwarder.add(5818, "172.29.1.1", 5808);
-    PortForwarder.add(5819, "172.29.1.1", 5809);
+    LimelightHelpers.setupPortForwardingUSB(0);
+    LimelightHelpers.setupPortForwardingUSB(1);
 
     disabledTimer = new Timer();
 
