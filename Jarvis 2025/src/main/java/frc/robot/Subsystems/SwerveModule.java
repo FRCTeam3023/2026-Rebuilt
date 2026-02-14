@@ -26,13 +26,14 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.SparkBaseSetter;
 import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
 import frc.robot.Util.TalonFXSetter;
 
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase {
     private TalonFX driveMotor;
     private SparkMax turnMotor;
     private SparkMaxConfig turnConfig;
