@@ -61,8 +61,8 @@ public class Constants {
 
     public static class DrivetrainConstants {
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
-        public static final double MAX_DRIVE_SPEED = 5;
-        public static final double MAX_ANGULAR_SPEED = 3;
+        public static final double MAX_DRIVE_SPEED = 2;
+        public static final double MAX_ANGULAR_SPEED = 2;
         public static final double ALIGN_CONTROL_MULTIPLIER = 0.2;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
     }
