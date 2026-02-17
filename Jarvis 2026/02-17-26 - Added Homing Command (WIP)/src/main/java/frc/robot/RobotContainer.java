@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.SwerveModule;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -37,7 +38,7 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  private final SwerveModule       drivebase  = new SwerveModule(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/falcon"));
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
@@ -95,6 +96,8 @@ public class RobotContainer
                                                                                .translationHeadingOffset(true)
                                                                                .translationHeadingOffset(Rotation2d.fromDegrees(
                                                                                    0));
+  
+  private static boolean isBlue = false;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -188,6 +191,15 @@ public class RobotContainer
 
   }
 
+  public static boolean isBlue() {
+    return isBlue;
+  }
+
+  public void onTeleopEnabled() {
+    isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
+    ControlPanel.pullReefInput();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -203,4 +215,5 @@ public class RobotContainer
   {
     drivebase.setMotorBrake(brake);
   }
+  
 }

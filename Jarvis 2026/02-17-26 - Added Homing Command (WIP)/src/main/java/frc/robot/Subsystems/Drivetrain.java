@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -50,7 +51,7 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics, 
             new Rotation2d(), 
-            MODULES.collectProperty(SwerveSubsystem::getPosition, SwerveModulePosition.class),
+            MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class),
             new Pose2d(0,0, new Rotation2d()),
             MatBuilder.fill(Nat.N3(), Nat.N1(),0.05,0.05,0.05), //Standard deviations for state estimate, (m,m,rad). Increase to trust less
             MatBuilder.fill(Nat.N3(), Nat.N1(), 
@@ -67,9 +68,9 @@ public class Drivetrain extends SubsystemBase {
     BACK_LEFT(2),
     BACK_RIGHT(3);
 
-    public SwerveSubsystem base;
+    public SwerveModule base;
     private MODULES(int moduleID) {
-      this.base = new SwerveSubsystem(
+      this.base = new SwerveModule(
         moduleID, 
         moduleID + 1, 
         moduleID + 5, 
@@ -86,12 +87,12 @@ public class Drivetrain extends SubsystemBase {
      * @return The resulting list
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] collectProperty(Function<SwerveSubsystem, T> map, Class<T> returnType) {
+    public static <T> T[] collectProperty(Function<SwerveModule, T> map, Class<T> returnType) {
       List<T> result = List.of(MODULES.values()).stream().map(m -> map.apply(m.base)).collect(Collectors.toList());
       return result.toArray((T[]) Array.newInstance(returnType, result.size()));
     }
 
-    public static void forAll(Consumer<SwerveSubsystem> lambda) {
+    public static void forAll(Consumer<SwerveModule> lambda) {
       for (MODULES modules : MODULES.values()) {
         lambda.accept(modules.base);
       }
@@ -103,7 +104,7 @@ public class Drivetrain extends SubsystemBase {
     return new SequentialCommandGroup(
       new InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false))),
       new ParallelRaceGroup(
-        new RunCommand(() -> MODULES.forAll(SwerveSubsystem::home), this),
+        new RunCommand(() -> MODULES.forAll(SwerveModule::home), this),
         new WaitUntilCommand(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
           .andThen(Notifications.SWERVE_HOME_SUCCESS.send()),
         new WaitCommand(3)

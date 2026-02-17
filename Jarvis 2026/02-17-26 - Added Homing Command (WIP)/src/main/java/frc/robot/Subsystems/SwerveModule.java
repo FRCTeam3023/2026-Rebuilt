@@ -13,16 +13,39 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.ModuleConstants;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import frc.robot.Util.SparkBaseSetter;
+import frc.robot.Util.TalonFXSetter;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -33,19 +56,50 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-public class SwerveSubsystem extends SubsystemBase
+public class SwerveModule extends SubsystemBase
 {
   /**
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+  private TalonFX driveMotor;
+  private SparkMax turnMotor;
+  private SparkMaxConfig turnConfig;
+  private SparkClosedLoopController turnPIDController;
+  private RelativeEncoder turnEncoder;
+  private double moduleOffset;
+  private DigitalInput hallEffectSensor;
+  public int moduleID;
 
+  public boolean homed = false;
+  private boolean wasHomed;
+
+  private VelocityVoltage desiredVelocity = new VelocityVoltage(0);
+  private TalonFXConfiguration driveConfiguration;
+
+  public static final TalonFXSetter driveSetters = new TalonFXSetter();
+  public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
+
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Swerve/Modules");
+  private final GenericEntry homedEntry, switchEntry;
+
+  /**
+  * A single swerve module object
+  * @param moduleID Module number
+  * @param driveID CAN ID number for the drive Falcon500 
+  * @param turnID CAN ID number for the turning SparkMax
+  * @param moduleOffset radian offset for the zero position in relation to the hall effect sensor
+  * @param inverted set true if the drive motor should be inverted. (Preference depending on set module offset)
+  * @param sensorID DIO pin number of the hall effect sensor
+  */
+
+    
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
    */
-   public SwerveSubsystem(File directory)
+   public SwerveModule(File directory)
   { 
     boolean blueAlliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
@@ -81,7 +135,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  public SwerveModule(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
     swerveDrive = new SwerveDrive(driveCfg,
                                   controllerCfg,
@@ -90,9 +144,56 @@ public class SwerveSubsystem extends SubsystemBase
                                              Rotation2d.fromDegrees(0)));
   }
 
-  public SwerveSubsystem(int moduleID, int i, int j, double d, Object object, int moduleID2) {
-    //TODO Auto-generated constructor stub
-}
+  public SwerveModule(int moduleID, int driveID, int turnID, double moduleOffset, InvertedValue inverted, int sensorID){
+        this.moduleOffset = moduleOffset;
+        this.moduleID = moduleID;
+
+        hallEffectSensor = new DigitalInput(sensorID);
+
+        //#region Drive Motor
+        driveMotor = new TalonFX(driveID);
+
+        driveConfiguration = new TalonFXConfiguration();
+        driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        driveConfiguration.MotorOutput.Inverted = inverted;
+        driveConfiguration.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.25;
+
+        driveConfiguration.Voltage.PeakForwardVoltage = Constants.GAINS.DRIVE.peakOutput;
+        driveConfiguration.Voltage.PeakReverseVoltage = -Constants.GAINS.DRIVE.peakOutput;
+
+        driveConfiguration.Feedback.SensorToMechanismRatio = ModuleConstants.DRIVE_GEARING / (ModuleConstants.WHEEL_DIA * Math.PI);
+        driveConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+
+        driveMotor.getConfigurator().apply(driveConfiguration);
+        driveSetters.addConfigurator(driveMotor.getConfigurator());
+        desiredVelocity.UpdateFreqHz = 100;
+        //#endregion
+
+        //#region Turn Motor
+        turnMotor = new SparkMax(turnID, MotorType.kBrushless);
+        turnPIDController = turnMotor.getClosedLoopController();
+        turnConfig = new SparkMaxConfig();
+        turnConfig
+            .inverted(true)
+            .idleMode(IdleMode.kBrake)
+            .voltageCompensation(12);
+        turnConfig.encoder
+            .positionConversionFactor(2 * Math.PI / ModuleConstants.TURN_GEARING)
+            .velocityConversionFactor(2 * Math.PI / ModuleConstants.TURN_GEARING);
+        turnConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .positionWrappingEnabled(true)
+            .positionWrappingMaxInput(Math.PI)
+            .positionWrappingMinInput(-Math.PI)
+            .outputRange(-Constants.GAINS.TURN.peakOutput, Constants.GAINS.TURN.peakOutput);
+
+        turnSetters.addConfigurator(new SparkConfiguration(turnMotor, turnConfig));
+        turnEncoder = turnMotor.getEncoder();
+        //#endregion
+
+        homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
+        switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
+    }
 
 @Override
   public void periodic()
