@@ -197,7 +197,7 @@ public class RobotContainer
 
   public void onTeleopEnabled() {
     isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
-    ControlPanel.pullReefInput();
+    // ControlPanel.pullReefInput();
   }
 
   /**

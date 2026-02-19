@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.JoystickDrive;
 import frc.robot.Commands.Notifications;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Util.Elastic;
@@ -35,5 +36,13 @@ public class ControlPanel {
     private static final Joystick controller2 = new Joystick(1);
 
     private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Control Panel");
+    private static Drivetrain drivetrain;
 
+    public static void configureBinding(Drivetrain drivetrain) {
+        drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
+        ControlPanel.drivetrain = drivetrain;
+        
+        new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand());
+        new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU()));
+    }
 }

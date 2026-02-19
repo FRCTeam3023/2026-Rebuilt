@@ -16,11 +16,14 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.SerialPort.StopBits;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -47,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
     public static boolean alignMode = false;
     private PathPlannerPath currentLineupPath = null;
 
-    public Drivetrain() {
+    /* public Drivetrain() {
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics, 
             new Rotation2d(), 
@@ -60,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
                 Constants.PhotonConstants.STANDARD_DEVIATION
             )
         );
-    }
+    } */
     
     enum MODULES {
     FRONT_LEFT(0),
@@ -98,6 +101,26 @@ public class Drivetrain extends SubsystemBase {
       }
     }
 //#endregion
+  }
+
+  public static void setModuleStates(SwerveModuleState[] moduleStates){
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, ModuleConstants.MAX_SPEED);
+    MODULES.forAll(m -> m.setDesiredState(moduleStates[m.moduleID]));
+  }
+
+  public void drive(ChassisSpeeds speeds, boolean isFieldRelative){
+    if(isFieldRelative)
+      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+
+    setModuleStates(kinematics.toSwerveModuleStates(speeds));
+  }
+
+  public Pose2d getPose(){
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  public void resetIMU() {
+    IMU.reset();
   }
 
   public Command homeCommand() {

@@ -6,12 +6,14 @@ package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -26,6 +28,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 
 import java.io.File;
+import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -39,11 +42,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Util.SparkBaseSetter;
+import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
 import frc.robot.Util.TalonFXSetter;
 
 import swervelib.SwerveController;
@@ -61,7 +66,7 @@ public class SwerveModule extends SubsystemBase
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  private SwerveDrive swerveDrive;
   private TalonFX driveMotor;
   private SparkMax turnMotor;
   private SparkMaxConfig turnConfig;
@@ -81,7 +86,7 @@ public class SwerveModule extends SubsystemBase
   public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
 
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Swerve/Modules");
-  private final GenericEntry homedEntry, switchEntry;
+  // private final GenericEntry homedEntry, switchEntry;
 
   /**
   * A single swerve module object
@@ -191,10 +196,10 @@ public class SwerveModule extends SubsystemBase
         turnEncoder = turnMotor.getEncoder();
         //#endregion
 
-        homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
-        switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
+        // homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
+        // switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
     }
-
+    
 @Override
   public void periodic()
   {
@@ -522,6 +527,51 @@ public class SwerveModule extends SubsystemBase
                                                         Constants.MAX_SPEED);
   }
 
+/*
+  public void periodicDebug() {
+    switchEntry.setBoolean(getSwitch());
+    homedEntry.setBoolean(homed);
+  }
+*/
+
+/**
+ * Set the desired state for the module. Drive speeds of 0 will result in no azimuth movement.
+ * @param desiredState the desired state
+ */
+  public void setDesiredState(SwerveModuleState desiredState) {
+    if(Math.abs(desiredState.speedMetersPerSecond) < .001){
+      stop();
+      return;
+    }
+
+    desiredState.optimize(getWrappedAngle());
+    desiredVelocity.Velocity = desiredState.speedMetersPerSecond;
+    driveMotor.setControl(desiredVelocity);
+
+    turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
+  }
+
+  public void home(){
+    boolean switchState = getSwitch();
+    //only triggers on rising edge of switch, set new home state and target location
+    if (switchState != wasHomed && switchState) {
+      turnEncoder.setPosition(moduleOffset);
+      homed = true;
+    }
+
+    //if it is triggered, set to target; else keep rotating
+    if (homed)
+      turnPIDController.setReference(moduleOffset, SparkMax.ControlType.kPosition);
+    else
+      turnMotor.set(0.25);
+
+      wasHomed = switchState;
+  }
+
+  public boolean getSwitch(){
+    return !hallEffectSensor.get();
+  }
+
   /**
    * Gets the current field-relative velocity (x, y and omega) of the robot
    *
@@ -590,8 +640,29 @@ public class SwerveModule extends SubsystemBase
     return swerveDrive;
   }
 
-public Object setHomed(boolean b) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setHomed'");
-}
+  /**
+   * Angle of module. This is the unbound version raw from encoder
+   * @return angle of module 
+   */
+  public Rotation2d getAngle(){
+    return new Rotation2d(turnEncoder.getPosition());
+  }
+
+    /**
+   * Angle of the swerve module constrained to (-PI, PI)
+   * @return
+   */
+  public Rotation2d getWrappedAngle(){
+    return new Rotation2d(MathUtil.angleModulus(getAngle().getRadians()));
+  }
+
+  public void setHomed(boolean state){
+    homed = state;
+    wasHomed = getSwitch();
+  }
+
+  public void stop(){
+    driveMotor.set(0);
+    turnMotor.set(0);
+  }
 }
