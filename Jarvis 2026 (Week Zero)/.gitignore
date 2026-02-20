@@ -157,6 +157,8 @@ gradle-app.setting
 .project
 .settings/
 bin/
+.pdb
+
 
 # IntelliJ
 *.iml
