@@ -9,7 +9,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,9 +23,14 @@ public class Shooter extends SubsystemBase {
   SparkFlex shooter;
   SparkFlexConfig shooterConfig;
   SparkClosedLoopController shooterController;
+  
+  SparkMax indexer;
+  SparkMaxConfig indexerConfig;
+  SparkClosedLoopController indexerController;
 
   public Shooter() {
     shooter = new SparkFlex(Constants.CAN_DEVICES.SHOOTER_MOTOR.id, MotorType.kBrushless);
+    indexer = new SparkMax(Constants.CAN_DEVICES.INDEX_MOTOR.id, MotorType.kBrushless);
 
     shooterConfig = new SparkFlexConfig();
     shooterConfig
@@ -42,17 +49,31 @@ public class Shooter extends SubsystemBase {
     closedLoopSetter.setPID(Constants.GAINS.SHOOTER);
     PIDDisplay.PIDList.addOption("End Effector", closedLoopSetter);
 
+    indexerConfig = new SparkMaxConfig();
+    indexerConfig
+    .inverted(false)
+    .idleMode(IdleMode.kBrake)
+    .voltageCompensation(12);
+    indexerConfig.encoder
+    .positionConversionFactor(1)
+    .velocityConversionFactor(1);
+    indexerConfig.closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    .positionWrappingEnabled(false)
+    .outputRange(-Constants.GAINS.INDEXER.peakOutput, Constants.GAINS.INDEXER.peakOutput);
+
+
   }
 
   public void setShooterVelocity(double rpm){
     shooterController.setSetpoint(rpm, ControlType.kVelocity);
   }
 
-  /* 
-  public void index(){
-
+  
+  public void setIndexVelocity(double rpm){
+    indexerController.setSetpoint(rpm, ControlType.kVelocity);
   }
-  */
+  
 
 
   @Override

@@ -4,15 +4,11 @@
 
 package frc.robot;
 
-import java.lang.ProcessBuilder.Redirect;
-import java.util.Optional;
-
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -53,11 +49,19 @@ public class Constants {
     }
 
     public static class SHOOTER {
+        public static double GEAR_RATIO = 3;
         public static double NOMINAL_RPM = 200;
         public static double VEL_TO_RPM = 1;
         public static double SHOOTER_ANGLE = 70;
+    }
 
+    public static class INDEXER {
+        public static double GEAR_RATIO = 2;
+    }
 
+    public static class INTAKE {
+        public static double MANIPULATOR_GEAR_RATIO = 2;
+        public static double ACUATOR_GEAR_RATIO = 5;
     }
 
     public static class HUB{
@@ -78,7 +82,15 @@ public class Constants {
     public static class GAINS {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
+
         public static Gains SHOOTER = new Gains(2, 0, 0, 0 ,12);
+        public static Gains INDEXER = new Gains(0, 0, 0, 0, 12);   
+
+        public static Gains AGITATOR = new Gains(0, 0, 0, 0, 12);
+
+
+        public static Gains INTAKE_ACUATOR = new Gains(2, 0, 0, 0, 12);
+        public static Gains INTAKE_MANIPULATOR = new Gains(2, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {
