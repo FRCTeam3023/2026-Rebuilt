@@ -148,7 +148,7 @@ public class SwerveModule extends SubsystemBase {
 
         //if it is triggered, set to target; else keep rotating
         if (homed)
-            turnPIDController.setReference(moduleOffset, SparkMax.ControlType.kPosition);
+            turnPIDController.setSetpoint(moduleOffset, SparkMax.ControlType.kPosition);
         else
             turnMotor.set(0.25);
 
