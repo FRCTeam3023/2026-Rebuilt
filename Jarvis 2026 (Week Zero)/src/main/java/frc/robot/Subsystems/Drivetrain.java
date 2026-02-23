@@ -51,7 +51,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.ControlPanel;
 import frc.robot.RobotContainer;
 import frc.robot.Commands.Notifications;
 import frc.robot.Constants.ModuleConstants;
@@ -206,15 +205,27 @@ public class Drivetrain extends SubsystemBase {
     //SmartDashboard.putData("Drivetrain/Robot Pose", field);
   }
 
+
+  private Rotation2d headingOverride = null;
+
+  public void setHeadingOverride(Rotation2d heading){
+    headingOverride = heading;
+  }
+
+  public void clearHeadingOverride(){
+    headingOverride = null;
+  }
+
   /**
    * Primary drive method for the robot
    * @param speeds Speeds that the robot should be moving in - positive x is foreward, y is left, omega is CCW
    * @param isFieldRelative true if running in field relative mode
    */
   public void drive(ChassisSpeeds speeds, boolean isFieldRelative){
-    if(isFieldRelative)
+    if(isFieldRelative){
+      Rotation2d heading = headingOverride !=  null ? headingOverride : getPose().getRotation();
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
-
+    }
     setModuleStates(kinematics.toSwerveModuleStates(speeds));
   }
 

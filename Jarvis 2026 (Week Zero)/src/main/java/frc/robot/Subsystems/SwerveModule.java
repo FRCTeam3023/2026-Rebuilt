@@ -134,7 +134,7 @@ public class SwerveModule {
         desiredVelocity.Velocity = desiredState.speedMetersPerSecond;
         driveMotor.setControl(desiredVelocity);
 
-        turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
+        turnPIDController.setSetpoint(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
     }
 
     public void home(){
@@ -147,7 +147,7 @@ public class SwerveModule {
 
         //if it is triggered, set to target; else keep rotating
         if (homed)
-            turnPIDController.setReference(moduleOffset, SparkMax.ControlType.kPosition);
+            turnPIDController.setSetpoint(moduleOffset, SparkMax.ControlType.kPosition);
         else
             turnMotor.set(0.25);
 
