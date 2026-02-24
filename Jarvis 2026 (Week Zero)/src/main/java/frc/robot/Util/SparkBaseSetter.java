@@ -46,7 +46,7 @@ public class SparkBaseSetter implements PIDSetter {
         this.gains = gains;
         configurations.forEach(configuration -> {
             configuration.config.closedLoop.pidf(gains.P, gains.I, gains.D, gains.F);
-            configuration.motor.configure(configuration.config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+            configuration.motor.configure(configuration.config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
         });
     }
 

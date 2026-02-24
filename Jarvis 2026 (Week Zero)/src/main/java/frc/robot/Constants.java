@@ -53,6 +53,7 @@ public class Constants {
         public static double NOMINAL_RPM = 1500;
         public static double VEL_TO_RPM = 1;
         public static double SHOOTER_ANGLE = 70;
+        public static double SHOOTER_HEIGHT = Units.inchesToMeters(15);
     }
 
     public static class INDEXER {
@@ -61,7 +62,7 @@ public class Constants {
 
     public static class INTAKE {
         public static double MANIPULATOR_GEAR_RATIO = 9;
-        public static double ACUATOR_GEAR_RATIO = 5;
+        public static double ACTUATOR_GEAR_RATIO = 5;
     }
 
     public static class HUB{
@@ -83,14 +84,14 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
 
-        public static Gains SHOOTER = new Gains(.5, 0, 0, 0 ,12);
+        public static Gains SHOOTER = new Gains(0.0002, 0, 0, .0005 ,1);
         public static Gains INDEXER = new Gains(0, 0, 0, 0, 12);   
 
-        public static Gains AGITATOR = new Gains(0, 0, 0, 0, 12);
+        public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 12);
 
 
-        public static Gains INTAKE_ACUATOR = new Gains(2, 0, 0, 0, 12);
-        public static Gains INTAKE_MANIPULATOR = new Gains(2, 0, 0, 0, 12);
+        public static Gains INTAKE_ACTUATOR = new Gains(2, 0, 0, 0, 12);
+        public static Gains INTAKE_MANIPULATOR = new Gains(1, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {

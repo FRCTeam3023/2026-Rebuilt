@@ -206,16 +206,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
 
-  private Rotation2d headingOverride = null;
-
-  public void setHeadingOverride(Rotation2d heading){
-    headingOverride = heading;
-  }
-
-  public void clearHeadingOverride(){
-    headingOverride = null;
-  }
-
   /**
    * Primary drive method for the robot
    * @param speeds Speeds that the robot should be moving in - positive x is foreward, y is left, omega is CCW
@@ -223,7 +213,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public void drive(ChassisSpeeds speeds, boolean isFieldRelative){
     if(isFieldRelative){
-      Rotation2d heading = headingOverride !=  null ? headingOverride : getPose().getRotation();
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
     }
     setModuleStates(kinematics.toSwerveModuleStates(speeds));

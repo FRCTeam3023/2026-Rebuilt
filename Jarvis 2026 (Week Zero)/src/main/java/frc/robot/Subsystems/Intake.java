@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
   SparkMaxConfig endEffectorConfig;
   SparkClosedLoopController endEffectorController;
 
-  DigitalInput frameLimitSwitch = new DigitalInput(1);
+  DigitalInput frameLimitSwitch = new DigitalInput(5);
   private boolean wasAtLimit = false;
   double actuatorEncoderOffset = 0;
   
@@ -126,6 +126,7 @@ public class Intake extends SubsystemBase {
         }
     );
   }
+  //Make Better Intake Sequence
 
   @Override
   public void periodic() {

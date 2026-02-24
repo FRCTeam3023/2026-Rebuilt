@@ -76,7 +76,7 @@ public class ShooterSolver {
             );
 
             cachedHubPosition = tagPose.plus(hubPoseOffset);
-            return tagPose.plus(hubPoseOffset);
+            return cachedHubPosition;
         } else {
             throw new RuntimeException("Blue hub tag not found in field layout!");
         }
@@ -98,18 +98,17 @@ public class ShooterSolver {
         double distance = getTargetDistance();
 
         double targetVelocity = Math.sqrt(distance*distance*(9.81) 
-         / Math.pow(2*Math.cos(Math.toRadians(Constants.SHOOTER.SHOOTER_ANGLE)), 2) * Constants.HUB.HUB_TARGET_HEIGHT - distance * Math.tan(Math.toRadians(Constants.SHOOTER.SHOOTER_ANGLE)));
+         / Math.pow(2*Math.cos(Math.toRadians(Constants.SHOOTER.SHOOTER_ANGLE)), 2) * (Constants.HUB.HUB_TARGET_HEIGHT - Constants.SHOOTER.SHOOTER_HEIGHT) - distance * Math.tan(Math.toRadians(Constants.SHOOTER.SHOOTER_ANGLE)));
         
         return targetVelocity * Constants.SHOOTER.VEL_TO_RPM;
     }
  
 
-
-public double getAngleToHub(){
+public Rotation2d getAngleToHub(){
     Translation2d robot = drivetrain.getPose().getTranslation();
     Translation2d hub = getHubCenterPose().getTranslation();
 
-    return hub.minus(robot).getAngle().getRadians();
+    return hub.minus(robot).getAngle();
 }
 
 

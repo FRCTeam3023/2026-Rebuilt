@@ -29,7 +29,7 @@ public class ControlPanel {
         
         //new JoystickButton(controller, 1).whileTrue(intake);
 
-        new Trigger(() -> controller.getRawAxis(3) > 0.5).whileTrue(shooter.shootCommand()); //Dumb Shoot Command | Right Trigger
+        new Trigger(() -> controller.getRawAxis(3) > 0.7).whileTrue(shooter.shootCommand()); //Dumb Shoot Command | Right Trigger
         //new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(intake.intakeCommand()); //Intake Down and Run | Left Trigger
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(intake.intakeManualCommand()); // Intake Manual - No Pivot | Left Trigger
         

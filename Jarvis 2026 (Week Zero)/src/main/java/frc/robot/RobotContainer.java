@@ -12,10 +12,12 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Shooter;
 import frc.robot.Util.PIDDisplay;
+import frc.robot.Util.ShooterSolver;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
-  private static final Shooter shooter = new Shooter();
+  private static final ShooterSolver shootersolver = new ShooterSolver(drivetrain);
+  private static final Shooter shooter = new Shooter(shootersolver, drivetrain);
   private static final Intake intake = new Intake();
   //private static final Limelight limelight = new Limelight();
 

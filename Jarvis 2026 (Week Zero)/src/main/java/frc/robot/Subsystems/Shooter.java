@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -115,7 +116,9 @@ public class Shooter extends SubsystemBase {
 
   //continuosly calculates and sets the needed RPM and angle to target (only direct to target right now) based on distance, will add caching if it runs bad
   public Command autoAimCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed) {
-    return run(() -> {
+    return runOnce(() -> aimPID.reset())
+    .andThen(
+    run(() -> {
       setShooterVelocity(shooterSolver.getTargetRPM()); 
 
       double omega = 
@@ -123,14 +126,21 @@ public class Shooter extends SubsystemBase {
           drivetrain.getPose().getRotation().getRadians(),
           shooterSolver.getAngleToHub().getRadians()
         );
+      
+      omega = MathUtil.clamp(omega, -4, 4);
+
+        if (aimPID.atSetpoint()) {
+        omega = 0;
+        }
 
         drivetrain.drive(new ChassisSpeeds(xSpeed.getAsDouble(), ySpeed.getAsDouble(), omega), true);
       
     } 
       ).finallyDo(interrupted -> {
         setShooterVelocity(Constants.SHOOTER.NOMINAL_RPM);
-      }
-    );
+          }
+        )
+      );
     }
       
   public Command manualIndexCommand() {
