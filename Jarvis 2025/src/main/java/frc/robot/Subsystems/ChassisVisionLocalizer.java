@@ -141,8 +141,8 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   };
 
   public ChassisVisionLocalizer() {
-    PortForwarder.add(5800, "navCams01.local", 5800);
-    PortForwarder.add(5800, "navCams23.local", 5800);
+    /*PortForwarder.add(5800, "navCams01.local", 5800);
+    PortForwarder.add(5800, "navCams23.local", 5800);*/
     enabledEntry.setBoolean(enabled);
 
     calibrationEntry.setInteger(-1);

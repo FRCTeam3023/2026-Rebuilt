@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.SwerveModule;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -37,7 +37,7 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  private final SwerveModule       drivebase  = new SwerveModule(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/falcon"));
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto

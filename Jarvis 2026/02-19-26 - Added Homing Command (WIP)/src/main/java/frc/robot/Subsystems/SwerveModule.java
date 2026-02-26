@@ -104,7 +104,7 @@ public class SwerveModule extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
-   public SwerveModule(File directory)
+  public SwerveModule(File directory)
   { 
     boolean blueAlliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
@@ -140,15 +140,16 @@ public class SwerveModule extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveModule(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  /* public SwerveModule(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
     swerveDrive = new SwerveDrive(driveCfg,
                                   controllerCfg,
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
-  }
+  } */
 
+  /*
   public SwerveModule(int moduleID, int driveID, int turnID, double moduleOffset, InvertedValue inverted, int sensorID){
         this.moduleOffset = moduleOffset;
         this.moduleID = moduleID;
@@ -196,9 +197,9 @@ public class SwerveModule extends SubsystemBase
         turnEncoder = turnMotor.getEncoder();
         //#endregion
 
-        // homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
-        // switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
-    }
+        homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
+        switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
+    }*/
     
 @Override
   public void periodic()
@@ -548,7 +549,7 @@ public class SwerveModule extends SubsystemBase
     desiredVelocity.Velocity = desiredState.speedMetersPerSecond;
     driveMotor.setControl(desiredVelocity);
 
-    turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
+    turnPIDController.setSetpoint(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
   }
 
   public void home(){

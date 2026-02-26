@@ -135,7 +135,7 @@ public class SwerveModule extends SubsystemBase {
         desiredVelocity.Velocity = desiredState.speedMetersPerSecond;
         driveMotor.setControl(desiredVelocity);
 
-        turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
+        turnPIDController.setSetpoint(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
     }
 
     public void home(){
