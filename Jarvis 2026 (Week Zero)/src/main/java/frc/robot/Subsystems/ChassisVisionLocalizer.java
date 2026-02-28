@@ -177,7 +177,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
     for (NavCam navCam : navCams) {
       navCam.getRobotPoses().forEach(pose -> {
-        Drivetrain.addVisionMeasurement(pose.pose, pose.timeStamp);
+        //Drivetrain.addVisionMeasurement(pose.pose, pose.timeStamp);
       });
     }
   }

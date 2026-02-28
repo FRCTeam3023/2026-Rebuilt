@@ -19,7 +19,8 @@ import frc.robot.Util.Gains;
 /** Add your docs here. */
 public class Constants {
     public static int LED_LENGTH = 10;
- 
+    
+    public static double ROBOT_FRAME_LENGTH = Units.inchesToMeters(27);
    
 
 
@@ -84,14 +85,14 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
 
-        public static Gains SHOOTER = new Gains(0.0002, 0, 0, .0005 ,1);
-        public static Gains INDEXER = new Gains(0, 0, 0, 0, 12);   
+        public static Gains SHOOTER = new Gains(0.002, 0, 0, .00018 ,1.0);
+        public static Gains INDEXER = new Gains(0, 0, 0, 0, 1);   
 
-        public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 12);
+        public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 1);
 
 
-        public static Gains INTAKE_ACTUATOR = new Gains(2, 0, 0, 0, 12);
-        public static Gains INTAKE_MANIPULATOR = new Gains(1, 0, 0, 0, 12);
+        public static Gains INTAKE_ACTUATOR = new Gains(2, 0, 0, 0, 1.0);
+        public static Gains INTAKE_MANIPULATOR = new Gains(.0002, 0, 0, .0005, 1);
     }
 
     public static class DrivetrainConstants {

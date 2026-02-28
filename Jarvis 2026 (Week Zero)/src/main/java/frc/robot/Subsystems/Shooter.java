@@ -19,6 +19,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +31,10 @@ import frc.robot.Util.ShooterSolver;
 import frc.robot.Util.SparkBaseSetter;
 
 public class Shooter extends SubsystemBase {
+
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Shooter");
+
+  private final GenericEntry velocityEntry = nTable.getTopic("Shooter Velocity").getGenericEntry();
 
   private ShooterSolver shooterSolver;
   private Drivetrain drivetrain;
@@ -59,14 +66,15 @@ public class Shooter extends SubsystemBase {
     shooterConfig
     .inverted(false)
     .idleMode(IdleMode.kCoast)
+    .smartCurrentLimit(38)
     .voltageCompensation(12);
     shooterConfig.encoder
     .positionConversionFactor(1.0/Constants.SHOOTER.GEAR_RATIO)
-    .velocityConversionFactor(1.0/Constants.SHOOTER.GEAR_RATIO);
+    .velocityConversionFactor(1.0);
     shooterConfig.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .positionWrappingEnabled(false)
-    .outputRange(-Constants.GAINS.SHOOTER.peakOutput, Constants.GAINS.SHOOTER.peakOutput);
+    .outputRange(-1.0, 1.0);
 
     //makes the PID values accesible to elastic for testing
      SparkBaseSetter shooterSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(shooter, shooterConfig));
@@ -78,6 +86,7 @@ public class Shooter extends SubsystemBase {
     indexerConfig
     .inverted(false)
     .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(38)
     .voltageCompensation(12);
     indexerConfig.encoder
     .positionConversionFactor(1.0/Constants.INDEXER.GEAR_RATIO)
@@ -107,7 +116,7 @@ public class Shooter extends SubsystemBase {
   
   public Command shootCommand() {
       return new StartEndCommand(
-        () -> setShooterVelocity(3250),
+        () -> setShooterVelocity(3600),
         () -> setShooterVelocity(Constants.SHOOTER.NOMINAL_RPM)
         );
   }
@@ -153,6 +162,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    velocityEntry.setDouble(shooter.getEncoder().getVelocity());
     // This method will be called once per scheduler run
   }
 }

@@ -25,18 +25,33 @@ public class ControlPanel {
     public static void configureBinding(Drivetrain drivetrain, Shooter shooter, Intake intake) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
         ControlPanel.drivetrain = drivetrain;
+
+
+        /*Right Trigger - Dumb Shoot Command
+          Left Trigger - Run Intake
+          Right Bumper - Auto Distance Aim Command
+          Left Bumper - Run Indexer
+
+          
+          Start Button - Home Robot
+          Back Button - Reset Gyro
+        */
         
         
         //new JoystickButton(controller, 1).whileTrue(intake);
 
         new Trigger(() -> controller.getRawAxis(3) > 0.7).whileTrue(shooter.shootCommand()); //Dumb Shoot Command | Right Trigger
         //new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(intake.intakeCommand()); //Intake Down and Run | Left Trigger
+
+
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(intake.intakeManualCommand()); // Intake Manual - No Pivot | Left Trigger
         
-        new JoystickButton(controller, 4).whileTrue(shooter.autoAimCommand(
+        new JoystickButton(controller, 6).whileTrue(shooter.autoAimCommand(
         () -> -controller.getRawAxis(1),
         () -> -controller.getRawAxis(0)
-        )); // Hold to solve Velocity | Y
+        )); // Hold to solve Velocity | Right Bumper
+
+        new JoystickButton(controller, 4).onTrue(drivetrain.hubPoseResetCommand());
 
 
         new JoystickButton(controller, 5).whileTrue(shooter.manualIndexCommand()); // Manual Index Run | 

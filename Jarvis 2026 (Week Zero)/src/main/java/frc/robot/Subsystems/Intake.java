@@ -73,6 +73,7 @@ public class Intake extends SubsystemBase {
     //End Efector Config
     endEffectorConfig = new SparkMaxConfig();
     endEffectorConfig
+    .smartCurrentLimit(30)
     .inverted(false)
     .idleMode(IdleMode.kBrake)
     .voltageCompensation(12);
@@ -83,6 +84,7 @@ public class Intake extends SubsystemBase {
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .positionWrappingEnabled(false)
     .outputRange(-Constants.GAINS.INTAKE_MANIPULATOR.peakOutput, Constants.GAINS.INTAKE_MANIPULATOR.peakOutput);
+    
 
     SparkBaseSetter intakeEndEffectorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(endEffector, endEffectorConfig));
     intakeEndEffectorSetter.setPID(Constants.GAINS.INTAKE_ACTUATOR);
