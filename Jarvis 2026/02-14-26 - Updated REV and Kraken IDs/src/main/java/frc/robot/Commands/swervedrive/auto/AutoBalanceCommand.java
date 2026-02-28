@@ -5,7 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.SwerveModule;
 
 
 /**
@@ -15,18 +15,18 @@ import frc.robot.Subsystems.SwerveSubsystem;
 public class AutoBalanceCommand extends Command
 {
 
-  private final SwerveSubsystem swerveSubsystem;
+  private final SwerveModule swerveModule;
   private final PIDController   controller;
 
-  public AutoBalanceCommand(SwerveSubsystem swerveSubsystem)
+  public AutoBalanceCommand(SwerveModule swerveModule)
   {
-    this.swerveSubsystem = swerveSubsystem;
+    this.swerveModule = swerveModule;
     controller = new PIDController(1.0, 0.0, 0.0);
     controller.setTolerance(1);
     controller.setSetpoint(0.0);
     // each subsystem used by the command must be passed into the
     // addRequirements() method (which takes a vararg of Subsystem)
-    addRequirements(this.swerveSubsystem);
+    addRequirements(this.swerveModule);
   }
 
   /**
@@ -47,9 +47,9 @@ public class AutoBalanceCommand extends Command
   {
     SmartDashboard.putBoolean("At Tolerance", controller.atSetpoint());
 
-    double translationVal = MathUtil.clamp(controller.calculate(swerveSubsystem.getPitch().getDegrees(), 0.0), -0.5,
+    double translationVal = MathUtil.clamp(controller.calculate(swerveModule.getPitch().getDegrees(), 0.0), -0.5,
                                            0.5);
-    swerveSubsystem.drive(new Translation2d(translationVal, 0.0), 0.0, true);
+    swerveModule.drive(new Translation2d(translationVal, 0.0), 0.0, true);
   }
 
   /**
@@ -81,6 +81,6 @@ public class AutoBalanceCommand extends Command
   @Override
   public void end(boolean interrupted)
   {
-    swerveSubsystem.lock();
+    swerveModule.lock();
   }
 }
