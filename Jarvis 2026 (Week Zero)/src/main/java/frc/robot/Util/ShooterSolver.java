@@ -82,6 +82,53 @@ public class ShooterSolver {
         }
     }
 
+    public Pose2d getManualHomePose() {
+    Optional<DriverStation.Alliance> allianceOpt = DriverStation.getAlliance();
+    if (allianceOpt.isEmpty()) {
+        throw new RuntimeException("Alliance unknown!");
+    }
+
+    DriverStation.Alliance alliance = allianceOpt.get();
+
+    int tagID = (alliance == DriverStation.Alliance.Blue)
+        ? Constants.HUB.BLUE_TAG
+        : Constants.HUB.RED_TAG;
+
+    double hubOffset = (alliance == DriverStation.Alliance.Blue)
+        ? Constants.HUB.BLUE_OFFSET
+        : Constants.HUB.RED_OFFSET;
+
+    Pose2d tagPose = layout.getTagPose(tagID)
+        .orElseThrow(() -> new RuntimeException("Hub tag not found"))
+        .toPose2d();
+
+    // Step 1: Get hub center pose (same logic as auto)
+    Pose2d hubCenterPose = tagPose.plus(
+        new Transform2d(
+            new Translation2d(hubOffset, 0),
+            new Rotation2d()
+        )
+    );
+
+    // Step 2: Offset robot backward so robot center sits correctly
+    double robotHalfLength = Constants.ROBOT_FRAME_LENGTH / 2.0;
+
+    Pose2d manualHomePose = hubCenterPose.plus(
+        new Transform2d(
+            new Translation2d(-robotHalfLength, 0),
+            new Rotation2d()
+        )
+    );
+
+    // Step 3: Make robot face the hub center
+    return new Pose2d(
+        manualHomePose.getTranslation(),
+        hubCenterPose.getTranslation()
+            .minus(manualHomePose.getTranslation())
+            .getAngle()
+    );
+}
+
     public double getTargetDistance(){
 
     Pose2d hubPose = getHubCenterPose();

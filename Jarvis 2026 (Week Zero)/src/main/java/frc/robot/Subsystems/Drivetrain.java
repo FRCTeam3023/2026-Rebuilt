@@ -55,12 +55,14 @@ import frc.robot.RobotContainer;
 import frc.robot.Commands.Notifications;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
+import frc.robot.Util.ShooterSolver;
 
 public class Drivetrain extends SubsystemBase {
   private final Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModuleConstants.MODULE_POSITIONS);
   private static SwerveDrivePoseEstimator poseEstimator;
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain");
+
 
   private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 
@@ -69,7 +71,12 @@ public class Drivetrain extends SubsystemBase {
   public static boolean alignMode = false;
   private PathPlannerPath currentLineupPath = null;
 
+  private final ShooterSolver shooterSolver;
+
   public Drivetrain() {
+
+    shooterSolver = new ShooterSolver(this);
+
     poseEstimator = new SwerveDrivePoseEstimator(
       kinematics, 
       new Rotation2d(), 
@@ -277,5 +284,11 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
+  public Command hubPoseResetCommand() {
+  return new InstantCommand(
+    () -> setPose(shooterSolver.getManualHomePose()), 
+    this
+  );
+  }
 
 }
