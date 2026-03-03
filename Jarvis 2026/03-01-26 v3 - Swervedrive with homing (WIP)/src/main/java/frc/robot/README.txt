@@ -1,5 +1,5 @@
 To allow for our homing sequence to work, we are currently relying on portions of code from our previous season. These are used
-exclusively for homing and shouldn't be considered while troubleshooting other components (aside from potential naming conflicts).
+exclusively for homing and shouldn't conflict with other components (aside from potential naming conflicts).
 
 These locations contain old code, labelled as such using comments:
     - SwerveSubsystem.java
