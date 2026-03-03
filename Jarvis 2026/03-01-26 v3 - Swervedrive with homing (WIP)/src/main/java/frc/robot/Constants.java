@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.Gains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -24,4 +25,19 @@ public final class Constants {
   public static class CAN_ID {
     public static final int IMU_ID = 20;
   }
+
+  public static class GAINS { // Start of Jarvis 2025 code portion
+      public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
+      public static Gains TURN = new Gains(.6, 1);
+      public static Gains ELEVATOR = new Gains(20, 0, 0, 0, 0, 12);
+      public static Gains END_EFFECTOR = new Gains(0.005, 0, 0, 0, 12);
+      public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
+      public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
+  }
+
+  public static class ModuleConstants {
+    public static final double DRIVE_GEARING = 8;
+    public static final double WHEEL_DIA = Units.inchesToMeters(3.875);
+    public static final double TURN_GEARING = 2.89 * 2.89 * 6;
+  } // End of Jarvis 2025 code portion
 }
