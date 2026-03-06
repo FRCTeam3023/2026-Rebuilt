@@ -97,7 +97,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final double TOP_LIMIT_POSITION =1.675;
+        public static final double TOP_LIMIT_POSITION = 1.675;
         public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(42);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
@@ -110,7 +110,7 @@ public class Constants {
         //Gear ratio of the elevator drive motor
         public static final double GEARING = 9 * 3;
 
-        //Tolerence for elevator height
+        //Tolerance for elevator height
         public static final double SETPOINT_RANGE = .25;
 
         public static final double[] PRESET_HEIGHTS = {

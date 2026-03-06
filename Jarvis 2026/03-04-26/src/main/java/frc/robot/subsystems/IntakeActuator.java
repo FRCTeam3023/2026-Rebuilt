@@ -1,4 +1,4 @@
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -20,38 +20,39 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.Commands.Notifications;
-import frc.robot.Util.PIDDisplay;
-import frc.robot.Util.SparkBaseSetter;
-import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
+import frc.robot.commands.Notifications;
+import frc.robot.util.PIDDisplay;
+import frc.robot.util.SparkBaseSetter;
+import frc.robot.util.SparkBaseSetter.SparkConfiguration;
 
 
-public class Elevator extends SubsystemBase {
+public class IntakeActuator extends SubsystemBase {
   private final DigitalInput topLimit = new DigitalInput(5);
   private final DigitalInput bottomLimit = new DigitalInput(4);
-  private boolean previousTopLimit, previousBottomLimit;
+  // private boolean previousTopLimit, previousBottomLimit;   // Probably used for homing the elevator
 
-  private SparkFlex elevator;
-  private SparkFlexConfig elevatorConfig;
-  private SparkClosedLoopController elevatorController;
-
+  private SparkFlex intakeActuator;
+  private SparkFlexConfig intakeActuatorConfig;
+  private SparkClosedLoopController intakeActuatorController;
+/*
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Elevator");
   private final GenericEntry targetPositionEntry = nTable.getTopic("Target").getGenericEntry();
   private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
   private final GenericEntry topSwitchEntry = nTable.getTopic("Top Switch").getGenericEntry();
   private final GenericEntry bottomSwitchEntry = nTable.getTopic("Bottom Switch").getGenericEntry();
   private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
-  
-  public Elevator(){
-    elevator = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, MotorType.kBrushless);
-    elevatorController = elevator.getClosedLoopController();
+*/    // Previously used for the elevator, leaving as a reference
 
-    elevatorConfig = new SparkFlexConfig();
-    elevatorConfig
+  public IntakeActuator() {
+    intakeActuator = new SparkFlex(Constants.CAN_ID.INTAKE_ACTUATOR_ID, MotorType.kBrushless);
+    intakeActuatorController = intakeActuator.getClosedLoopController();
+
+    intakeActuatorConfig = new SparkFlexConfig();
+    intakeActuatorConfig
       .inverted(false)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
-    elevatorConfig.encoder
+    intakeActuatorConfig.encoder // Look at pivot code from Jarvis 2025 (03/04/2026)
       .positionConversionFactor(Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE / Constants.ElevatorConstants.GEARING)
       .velocityConversionFactor(Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE / Constants.ElevatorConstants.GEARING);
     elevatorConfig.closedLoop
@@ -78,7 +79,7 @@ public class Elevator extends SubsystemBase {
       Notifications.ELEVATOR_INVALID_HEIGHT.sendImmediate(targetPosition);
       return;
     }
-    elevatorController.setSetpoint(targetPosition, SparkFlex.ControlType.kPosition);
+    elevatorController.setReference(targetPosition, SparkFlex.ControlType.kPosition);
     targetPositionEntry.setDouble(targetPosition);
   }
 
