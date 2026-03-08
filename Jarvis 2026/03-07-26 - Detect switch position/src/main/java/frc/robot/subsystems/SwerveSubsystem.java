@@ -187,11 +187,11 @@ public class SwerveSubsystem extends SubsystemBase {
   public DigitalInput moduleMagSensors3 = moduleMagSensors[3];
 
   public boolean switchID0() {
-    return !moduleMagSensors2.get();
+    return !moduleMagSensors0.get();
   }
 
   public boolean switchID1() {
-    return !moduleMagSensors2.get();
+    return !moduleMagSensors1.get();
   }
 
   public boolean switchID2() {
@@ -199,6 +199,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean switchID3() {
-    return !moduleMagSensors2.get();
+    return !moduleMagSensors3.get();
   }
 }
