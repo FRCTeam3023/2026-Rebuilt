@@ -6,11 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.swervedrive.HomeDrivetrainCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.commands.HomeDrivetrainCommand;
 import frc.robot.subsystems.IntakeActuator;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem();
   private final HomeDrivetrainCommand homeDrivetrainCommand = new HomeDrivetrainCommand(drivebase);
   // private final intakePosition intakePosition1;    // WIP for setting intake position
@@ -68,15 +65,8 @@ public class RobotContainer {
    */
   
    private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(drivebase.exampleMethodCommand());
     m_driverController.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
-    m_driverController.back().onTrue(Commands.runOnce(homeDrivetrainCommand()));
+    m_driverController.back().whileTrue(new HomeDrivetrainCommand(drivebase));
     m_driverController.x().onTrue(Commands.runOnce(drivebase::resetDriveEncoders));
     m_driverController.y().onTrue(Commands.runOnce(drivebase::useInternalFeedbackSensor));
     // m_driverController.a().onTrue(Commands.runOnce(intakePosition1::moveCommand(9)));
@@ -88,8 +78,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+  /* public Command getAutonomousCommand() {
+    // A command will be run in autonomous
+    
+  }*/
 }

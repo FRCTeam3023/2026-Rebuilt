@@ -1,10 +1,10 @@
-package frc.robot.commands.swervedrive;
+package frc.robot.commands;
 
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveModule;
 
 /**

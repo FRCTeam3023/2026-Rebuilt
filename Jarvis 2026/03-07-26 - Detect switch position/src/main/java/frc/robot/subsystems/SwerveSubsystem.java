@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -55,6 +58,11 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher xPub;
   private double xValue = 0.0;
 
+  private NetworkTableInstance switchInst;
+  private NetworkTable switchTable;
+  private BooleanPublisher switchPub;
+  private boolean switchValue;
+
     public SwerveSubsystem() {
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
   
@@ -69,9 +77,14 @@ public class SwerveSubsystem extends SubsystemBase {
       {
         throw new RuntimeException(e);
       }
+      
       inst = NetworkTableInstance.getDefault();
       swerveTable = inst.getTable("Swerve datatable");
       xPub = swerveTable.getDoubleTopic("x").publish();
+
+      switchInst = NetworkTableInstance.getDefault();
+      switchTable = inst.getTable("Switch datatable");
+      switchPub = switchTable.getBooleanTopic("Switch status").publish();
     }
   
     /**
@@ -102,6 +115,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
       xValue += 0.05;
       xPub.set(xValue);
+
+      switchPub.set(switchID0());
+      switchPub.set(switchID1());
+      switchPub.set(switchID2());
+      switchPub.set(switchID3());
     }
   
     @Override
@@ -161,5 +179,26 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public DigitalInput[] getModuleMagSensors() {
     return moduleMagSensors;
+  }
+
+  public DigitalInput moduleMagSensors0 = moduleMagSensors[0];
+  public DigitalInput moduleMagSensors1 = moduleMagSensors[1];
+  public DigitalInput moduleMagSensors2 = moduleMagSensors[2];
+  public DigitalInput moduleMagSensors3 = moduleMagSensors[3];
+
+  public boolean switchID0() {
+    return !moduleMagSensors2.get();
+  }
+
+  public boolean switchID1() {
+    return !moduleMagSensors2.get();
+  }
+
+  public boolean switchID2() {
+    return !moduleMagSensors2.get();
+  }
+
+  public boolean switchID3() {
+    return !moduleMagSensors2.get();
   }
 }
