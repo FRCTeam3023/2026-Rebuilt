@@ -12,6 +12,7 @@ import swervelib.SwerveModule;
  */
 public class HomeDrivetrainCommand extends Command {
     private final SwerveSubsystem swerveSubsystem;
+    public boolean wasHomed = false;
 
     public HomeDrivetrainCommand(SwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
@@ -25,6 +26,7 @@ public class HomeDrivetrainCommand extends Command {
         for (SwerveModule swerveModule : swerveSubsystem.getModules()) {
             swerveModule.getAngleMotor().set(0.1);
         }
+        wasHomed = false;
     }
 
     @Override
@@ -45,5 +47,9 @@ public class HomeDrivetrainCommand extends Command {
     public boolean isFinished() {
         // The command is finished when all the magnetic sensors are triggered, meaning all the modules are homed
         return Arrays.stream(swerveSubsystem.getModuleMagSensors()).allMatch(DigitalInput::get);
+    }
+
+    public void end() {
+        wasHomed = true;
     }
 }

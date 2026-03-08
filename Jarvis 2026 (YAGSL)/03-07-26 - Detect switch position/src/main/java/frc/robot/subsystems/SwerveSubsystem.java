@@ -12,29 +12,24 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.commands.HomeDrivetrainCommand;
+
 import java.io.File;
-import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.hardware.core.CorePigeon2;
 
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
-import swervelib.SwerveInputStream;
 import swervelib.SwerveModule;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -58,10 +53,12 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher xPub;
   private double xValue = 0.0;
 
-  private NetworkTableInstance switchInst;
   private NetworkTable switchTable;
-  private BooleanPublisher switchPub;
-  private boolean switchValue;
+  private BooleanPublisher switchPub0;
+  private BooleanPublisher switchPub1;
+  private BooleanPublisher switchPub2;
+  private BooleanPublisher switchPub3;
+  private BooleanPublisher wasHomedCheck;
 
     public SwerveSubsystem() {
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -82,9 +79,12 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveTable = inst.getTable("Swerve datatable");
       xPub = swerveTable.getDoubleTopic("x").publish();
 
-      switchInst = NetworkTableInstance.getDefault();
       switchTable = inst.getTable("Switch datatable");
-      switchPub = switchTable.getBooleanTopic("Switch status").publish();
+      switchPub0 = switchTable.getBooleanTopic("Homed ID 0").publish();
+      switchPub1 = switchTable.getBooleanTopic("Homed ID 1").publish();
+      switchPub2 = switchTable.getBooleanTopic("Homed ID 2").publish();
+      switchPub3 = switchTable.getBooleanTopic("Homed ID 3").publish();
+      wasHomedCheck = switchTable.getBooleanTopic("wasHomed").publish();
     }
   
     /**
@@ -116,10 +116,11 @@ public class SwerveSubsystem extends SubsystemBase {
       xValue += 0.05;
       xPub.set(xValue);
 
-      switchPub.set(switchID0());
-      switchPub.set(switchID1());
-      switchPub.set(switchID2());
-      switchPub.set(switchID3());
+      switchPub0.set(switchID0());
+      switchPub1.set(switchID1());
+      switchPub2.set(switchID2());
+      switchPub3.set(switchID3());
+      wasHomedCheck.set(wasHomedCheck());
     }
   
     @Override
@@ -200,5 +201,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public boolean switchID3() {
     return !moduleMagSensors3.get();
+  }
+
+  public boolean wasHomedCheck() {
+    return true;
   }
 }
