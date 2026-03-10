@@ -16,9 +16,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,10 +38,24 @@ public class Intake extends SubsystemBase {
   SparkMaxConfig endEffectorConfig;
   SparkClosedLoopController endEffectorController;
 
-  DigitalInput frameLimitSwitch = new DigitalInput(5);
+  // DigitalInput frameLimitSwitch = new DigitalInput(5);   // Old code by Nathan (03/09/26)
   private boolean wasAtLimit = false;
   double actuatorEncoderOffset = 0;
   
+  DigitalInput lowerLimitSwitch = new DigitalInput(5);
+  private boolean lowerLimit = false;
+  DigitalInput upperLimitSwitch = new DigitalInput(6);
+  private boolean upperLimit = false;
+
+  private NetworkTableInstance inst;
+  private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
+  private BooleanPublisher lowerLimitPub;
+  private BooleanPublisher upperLimitPub;
+
+  // For troubleshooting (03/09/26)
+  private boolean intakeTest = false;
+  private BooleanPublisher intakeTestPub;
+
   /** Creates a new Intake. */
   public Intake() {
     actuator = new SparkFlex(Constants.CAN_DEVICES.INTAKE_ACTUATOR.id, MotorType.kBrushless);
@@ -65,7 +83,7 @@ public class Intake extends SubsystemBase {
     .reverseSoftLimitEnabled(true)
     .forwardSoftLimitEnabled(true);
 
-     SparkBaseSetter intakeActuatorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(actuator, actuatorConfig));
+    SparkBaseSetter intakeActuatorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(actuator, actuatorConfig));
     intakeActuatorSetter.setPID(Constants.GAINS.INTAKE_ACTUATOR);
     PIDDisplay.PIDList.addOption("Intake actuator", intakeActuatorSetter);
 
@@ -90,11 +108,40 @@ public class Intake extends SubsystemBase {
     intakeEndEffectorSetter.setPID(Constants.GAINS.INTAKE_ACTUATOR);
     PIDDisplay.PIDList.addOption("Intake End Efector", intakeEndEffectorSetter);
 
+    // Network tables
+    inst = NetworkTableInstance.getDefault();
+    intakeTable = inst.getTable("Limit Switches");
+    lowerLimitPub = intakeTable.getBooleanTopic("Lower limit switch").publish();
+    upperLimitPub = intakeTable.getBooleanTopic("Upper limit switch").publish();
 
+    // For troubleshooting (03/09/26)
+    intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
   }
 
   public boolean isAtLimit() {
-    return frameLimitSwitch.get();
+    // return frameLimitSwitch.get();
+    return lowerLimitSwitch.get();
+  }
+
+  public boolean LowerLimit() {
+    // lowerLimitSwitch = frameLimitSwitch;
+    return lowerLimitSwitch.get();
+  }
+
+  public boolean UpperLimit() {
+    return upperLimitSwitch.get();
+  }
+
+  public boolean IntakeTest() {
+    return intakeTest;
+  }
+
+  public void setLowerLimit() {
+    /*if (lowerLimit = true) {
+      actuatorController.setSetpoint()    // Stops the actuator
+    } else {*/
+      moveIntakeTest();    // Moves the actuator into place
+    // }
   }
 
   public void moveIntake(double target){
@@ -130,6 +177,18 @@ public class Intake extends SubsystemBase {
   }
   //Make Better Intake Sequence
 
+  public Command moveIntakeTest() {
+    return new StartEndCommand(
+    () -> { 
+      moveIntake(0);
+      intakeTest = true;    // For troubleshooting (03/09/26)
+        },
+    () -> {
+      moveIntake(-90);
+        }
+    );
+  }
+
   @Override
   public void periodic() {
     boolean atLimit = isAtLimit();
@@ -137,5 +196,9 @@ public class Intake extends SubsystemBase {
       actuator.getEncoder().setPosition(0);
     }
     wasAtLimit = atLimit;
+
+    lowerLimitPub.set(LowerLimit());
+    upperLimitPub.set(UpperLimit());
+    intakeTestPub.set(IntakeTest());
   }
 }

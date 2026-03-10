@@ -71,11 +71,11 @@ public class Climber extends SubsystemBase {
 
   public void setPosition(Rotation2d target) {
     targetPositionEntry.setDouble(target.getDegrees());
-    climberController.setReference(target.getRotations(), ControlType.kPosition);
+    climberController.setSetpoint(target.getRotations(), ControlType.kPosition);
   }
 
   public void setVelocity(double speed) {
-    climberController.setReference(speed, ControlType.kVelocity);
+    climberController.setSetpoint(speed, ControlType.kVelocity);
   }
 
   public Command climbCommand(Rotation2d target) {

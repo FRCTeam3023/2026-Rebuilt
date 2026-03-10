@@ -46,19 +46,20 @@ public class ControlPanel {
 
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(intake.intakeManualCommand()); // Intake Manual - No Pivot | Left Trigger
         
-        new JoystickButton(controller, 6).whileTrue(shooter.autoAimCommand(
+        new JoystickButton(controller, 6).whileTrue(shooter.autoAimCommand( // Right Bumper
         () -> -controller.getRawAxis(1),
         () -> -controller.getRawAxis(0)
         )); // Hold to solve Velocity | Right Bumper
 
-        new JoystickButton(controller, 4).onTrue(drivetrain.hubPoseResetCommand());
+        new JoystickButton(controller, 4).onTrue(drivetrain.hubPoseResetCommand()); // Y
 
 
-        new JoystickButton(controller, 5).whileTrue(shooter.manualIndexCommand()); // Manual Index Run | 
+        new JoystickButton(controller, 5).whileTrue(shooter.manualIndexCommand()); // Manual Index Run | Left Bumper
 
-        new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand()); //Home Command for Swerve
-        new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU())); //Gyro Reset for Swerve
+        new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand()); //Home Command for Swerve | Back
+        new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU())); //Gyro Reset for Swerve | Start
 
+        new JoystickButton(controller, 1).whileTrue(intake.moveIntakeTest()); // A
         }
 
 

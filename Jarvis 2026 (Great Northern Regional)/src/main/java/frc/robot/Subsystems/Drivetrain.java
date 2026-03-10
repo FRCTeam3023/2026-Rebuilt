@@ -63,7 +63,6 @@ public class Drivetrain extends SubsystemBase {
   private static SwerveDrivePoseEstimator poseEstimator;
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain");
 
-
   private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 
   public static Field2d field = new Field2d();
@@ -209,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
     MODULES.forAll(m -> m.periodicDebug());
     headingEntry.setDouble(getPose().getRotation().getDegrees());
     field.setRobotPose(getPose());
-    //SmartDashboard.putData("Drivetrain/Robot Pose", field);
+    SmartDashboard.putData("Drivetrain/Robot Pose", field);   // Previously commented, uncommented for testing (03/08/26)
   }
 
 

@@ -40,6 +40,7 @@ public class Constants {
         INTAKE_ACTUATOR(11),
         INTAKE_MOTOR(12),
        //AGITATOR_MOTOR(13),
+        SHOOTER_MOTOR_2(14),
         ROBORIO(0),
         PIGEON_2(20);
 

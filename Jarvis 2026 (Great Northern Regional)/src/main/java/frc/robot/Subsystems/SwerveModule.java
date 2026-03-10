@@ -22,6 +22,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -137,7 +138,7 @@ public class SwerveModule {
         turnPIDController.setSetpoint(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
     }
 
-    public void home(){
+    public void home() {
         boolean switchState = getSwitch();
         //only triggers on rising edge of switch, set new home state and target location
         if (switchState != wasHomed && switchState) {
