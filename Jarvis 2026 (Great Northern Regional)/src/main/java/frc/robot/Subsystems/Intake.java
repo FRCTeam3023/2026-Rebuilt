@@ -16,7 +16,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -46,11 +48,15 @@ public class Intake extends SubsystemBase {
   private boolean lowerLimit = false;
   DigitalInput upperLimitSwitch = new DigitalInput(6);
   private boolean upperLimit = false;
+  private double intakeActuatorAngle = 0;
+  private double intakeActuatorAbsoluteAngle = 0;
 
   private NetworkTableInstance inst;
   private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
   private BooleanPublisher lowerLimitPub;
   private BooleanPublisher upperLimitPub;
+  private DoublePublisher intakeActuatorAnglePub;
+  private DoublePublisher intakeActuatorAbsoluteAnglePub;
 
   // For troubleshooting (03/09/26)
   private boolean intakeTest = false;
@@ -113,6 +119,8 @@ public class Intake extends SubsystemBase {
     intakeTable = inst.getTable("Limit Switches");
     lowerLimitPub = intakeTable.getBooleanTopic("Lower limit switch").publish();
     upperLimitPub = intakeTable.getBooleanTopic("Upper limit switch").publish();
+    intakeActuatorAnglePub = intakeTable.getDoubleTopic("Intake actuator angle").publish();
+    intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Intake actuator absolute angle").publish();
 
     // For troubleshooting (03/09/26)
     intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
@@ -132,6 +140,15 @@ public class Intake extends SubsystemBase {
     return upperLimitSwitch.get();
   }
 
+  public double IntakeActuatorAngle() {
+    // intakeActuatorAngle = 10.0;
+    return intakeActuatorAngle;
+  }
+
+  public double IntakeActuatorAbsoluteAngle() {
+    return intakeActuatorAbsoluteAngle;
+  }
+
   public boolean IntakeTest() {
     return intakeTest;
   }
@@ -145,10 +162,10 @@ public class Intake extends SubsystemBase {
   }
 
   public void moveIntake(double target){
-    if(target > 0 || target < -90){
+    /*if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
     DriverStation.reportWarning("Invalid intake target: " + target, false);
     return;
-  }
+  }*/
   actuatorController.setSetpoint(target, ControlType.kMAXMotionPositionControl);
   }
 
@@ -184,7 +201,7 @@ public class Intake extends SubsystemBase {
       intakeTest = true;    // For troubleshooting (03/09/26)
         },
     () -> {
-      moveIntake(-90);
+      moveIntake(-90/360);
         }
     );
   }
@@ -192,13 +209,16 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     boolean atLimit = isAtLimit();
-    if(atLimit && !wasAtLimit){
+    /*if(atLimit && !wasAtLimit){   // Commented for troubleshooting (03/10/26)
       actuator.getEncoder().setPosition(0);
-    }
+    }*/
     wasAtLimit = atLimit;
 
     lowerLimitPub.set(LowerLimit());
     upperLimitPub.set(UpperLimit());
+    intakeActuatorAnglePub.set(Math.toDegrees(actuator.getEncoder().getPosition()));
+    intakeActuatorAbsoluteAnglePub.set(Math.toDegrees(actuator.getAbsoluteEncoder().getPosition()));
+
     intakeTestPub.set(IntakeTest());
   }
 }

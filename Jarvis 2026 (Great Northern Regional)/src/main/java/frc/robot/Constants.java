@@ -64,7 +64,7 @@ public class Constants {
 
     public static class INTAKE {
         public static double MANIPULATOR_GEAR_RATIO = 9;
-        public static double ACTUATOR_GEAR_RATIO = 5;
+        public static double ACTUATOR_GEAR_RATIO = 3 * 9;       // Will eventually be changed to 81
     }
 
     public static class HUB{
@@ -92,7 +92,7 @@ public class Constants {
         public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 1);
 
 
-        public static Gains INTAKE_ACTUATOR = new Gains(2, 0, 0, 0, 1.0);
+        public static Gains INTAKE_ACTUATOR = new Gains(0.002, 0, 0, .00018, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
         public static Gains INTAKE_MANIPULATOR = new Gains(.0002, 0, 0, .0005, 1);
     }
 
