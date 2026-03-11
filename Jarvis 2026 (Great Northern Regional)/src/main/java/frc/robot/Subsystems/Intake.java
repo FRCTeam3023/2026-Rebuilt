@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
   private DoublePublisher intakeActuatorAnglePub;
   private DoublePublisher intakeActuatorAbsoluteAnglePub;
 
-  // For troubleshooting (03/09/26)
+  // Added for troubleshooting (03/09/26)
   private boolean intakeTest = false;
   private BooleanPublisher intakeTestPub;
 
@@ -122,7 +122,7 @@ public class Intake extends SubsystemBase {
     intakeActuatorAnglePub = intakeTable.getDoubleTopic("Intake actuator angle").publish();
     intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Intake actuator absolute angle").publish();
 
-    // For troubleshooting (03/09/26)
+    // Added for troubleshooting (03/09/26)
     intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
   }
 
@@ -198,7 +198,7 @@ public class Intake extends SubsystemBase {
     return new StartEndCommand(
     () -> { 
       moveIntake(0);
-      intakeTest = true;    // For troubleshooting (03/09/26)
+      intakeTest = true;    // Added for troubleshooting (03/09/26)
         },
     () -> {
       moveIntake(-90/360);
