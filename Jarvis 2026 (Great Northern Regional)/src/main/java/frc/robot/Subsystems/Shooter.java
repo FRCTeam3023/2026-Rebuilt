@@ -45,10 +45,6 @@ public class Shooter extends SubsystemBase {
   SparkFlexConfig shooterConfig2;
   SparkClosedLoopController shooterController;
   SparkClosedLoopController shooterController2;
-  
-  SparkMax indexer;
-  SparkMaxConfig indexerConfig;
-  SparkClosedLoopController indexerController;
 
   private final PIDController aimPID = new PIDController(5, 0, 0);
 
@@ -58,11 +54,11 @@ public class Shooter extends SubsystemBase {
 
     shooter = new SparkFlex(Constants.CAN_DEVICES.SHOOTER_MOTOR.id, MotorType.kBrushless);
     shooter2 = new SparkFlex(Constants.CAN_DEVICES.SHOOTER_MOTOR_2.id, MotorType.kBrushless);
-    indexer = new SparkMax(Constants.CAN_DEVICES.INDEX_MOTOR.id, MotorType.kBrushless);
+    
 
     shooterController = shooter.getClosedLoopController();
     shooterController2 = shooter2.getClosedLoopController();
-    indexerController = indexer.getClosedLoopController();
+    
 
     //Shooter motor controller config
     shooterConfig = new SparkFlexConfig();
@@ -103,27 +99,6 @@ public class Shooter extends SubsystemBase {
     shooterSetter2.setPID(Constants.GAINS.SHOOTER);
     PIDDisplay.PIDList.addOption("Shooter 2", shooterSetter2);
 
-
-    //Indexer motor controller config
-    indexerConfig = new SparkMaxConfig();
-    indexerConfig
-    .inverted(false)
-    .idleMode(IdleMode.kBrake)
-    .smartCurrentLimit(38)
-    .voltageCompensation(12);
-    indexerConfig.encoder
-    .positionConversionFactor(1.0/Constants.INDEXER.GEAR_RATIO)
-    .velocityConversionFactor(1.0/Constants.INDEXER.GEAR_RATIO);
-    indexerConfig.closedLoop
-    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .positionWrappingEnabled(false)
-    .outputRange(-Constants.GAINS.INDEXER.peakOutput, Constants.GAINS.INDEXER.peakOutput);
-
-    //makes the PID values accesible to elastic for testing
-    SparkBaseSetter indexerSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(indexer, indexerConfig));
-    indexerSetter.setPID(Constants.GAINS.INDEXER);
-    PIDDisplay.PIDList.addOption("Indexer", indexerSetter);
-
     aimPID.enableContinuousInput(-Math.PI, Math.PI);
     aimPID.setTolerance(Math.toRadians(1.5)); // stop jittering
 
@@ -134,9 +109,6 @@ public class Shooter extends SubsystemBase {
     shooterController2.setSetpoint(rpm, ControlType.kVelocity);
   }
   
-  public void setIndexVelocity(double rpm){
-    indexerController.setSetpoint(rpm, ControlType.kVelocity);
-  }
   
   public Command shootCommand() {
       return new StartEndCommand(
@@ -177,12 +149,7 @@ public class Shooter extends SubsystemBase {
       );
     }
       
-  public Command manualIndexCommand() {
-    return new StartEndCommand(
-      () -> setIndexVelocity(40),
-      () -> setIndexVelocity(0)
-      );
-  }
+ 
 
 
   @Override

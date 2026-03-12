@@ -6,6 +6,8 @@ package frc.robot.Subsystems;
 
 
 
+import java.util.ResourceBundle.Control;
+
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -13,10 +15,12 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -40,14 +44,17 @@ public class Intake extends SubsystemBase {
   SparkMaxConfig endEffectorConfig;
   SparkClosedLoopController endEffectorController;
 
-  // DigitalInput frameLimitSwitch = new DigitalInput(5);   // Old code by Nathan (03/09/26)
-  private boolean wasAtLimit = false;
+  private boolean wasAtBottomLimit = false;
+  private boolean wasAtTopLimit = false;
+
   double actuatorEncoderOffset = 0;
   
-  DigitalInput lowerLimitSwitch = new DigitalInput(5);
+  DigitalInput lowerLimitSwitch = new DigitalInput(6);
   private boolean lowerLimit = false;
-  DigitalInput upperLimitSwitch = new DigitalInput(6);
+  DigitalInput upperLimitSwitch = new DigitalInput(5);
   private boolean upperLimit = false;
+
+
   private double intakeActuatorAngle = 0;
   private double intakeActuatorAbsoluteAngle = 0;
 
@@ -75,6 +82,7 @@ public class Intake extends SubsystemBase {
     actuatorConfig
     .inverted(false)
     .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(40)
     .voltageCompensation(12);
     actuatorConfig.encoder
     .positionConversionFactor(1.0/Constants.INTAKE.ACTUATOR_GEAR_RATIO)
@@ -83,11 +91,16 @@ public class Intake extends SubsystemBase {
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .positionWrappingEnabled(false)
     .outputRange(-Constants.GAINS.INTAKE_ACTUATOR.peakOutput, Constants.GAINS.INTAKE_ACTUATOR.peakOutput);
-    actuatorConfig.softLimit
-    .reverseSoftLimit(90)
-    .forwardSoftLimit(actuatorEncoderOffset)
-    .reverseSoftLimitEnabled(true)
-    .forwardSoftLimitEnabled(true);
+    // actuatorConfig.softLimit
+    // .reverseSoftLimit(90)
+    // .forwardSoftLimit(actuatorEncoderOffset)
+    // .reverseSoftLimitEnabled(true)
+    // .forwardSoftLimitEnabled(true);
+    actuatorConfig.closedLoop.maxMotion
+    .maxAcceleration(4)
+    .maxVelocity(40);
+    
+    
 
     SparkBaseSetter intakeActuatorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(actuator, actuatorConfig));
     intakeActuatorSetter.setPID(Constants.GAINS.INTAKE_ACTUATOR);
@@ -111,7 +124,7 @@ public class Intake extends SubsystemBase {
     
 
     SparkBaseSetter intakeEndEffectorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(endEffector, endEffectorConfig));
-    intakeEndEffectorSetter.setPID(Constants.GAINS.INTAKE_ACTUATOR);
+    intakeEndEffectorSetter.setPID(Constants.GAINS.INTAKE_MANIPULATOR);
     PIDDisplay.PIDList.addOption("Intake End Efector", intakeEndEffectorSetter);
 
     // Network tables
@@ -126,18 +139,18 @@ public class Intake extends SubsystemBase {
     intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
   }
 
-  public boolean isAtLimit() {
-    // return frameLimitSwitch.get();
-    return lowerLimitSwitch.get();
+  //#region Network Table Setters
+  // public boolean isAtLimit() {
+  //   // return frameLimitSwitch.get();
+  //   return lowerLimitSwitch.get();
+  // }
+
+  public boolean getBottomLimitState() {
+    return !lowerLimitSwitch.get();
   }
 
-  public boolean LowerLimit() {
-    // lowerLimitSwitch = frameLimitSwitch;
-    return lowerLimitSwitch.get();
-  }
-
-  public boolean UpperLimit() {
-    return upperLimitSwitch.get();
+  public boolean getTopLimitState() {
+    return !upperLimitSwitch.get();
   }
 
   public double IntakeActuatorAngle() {
@@ -152,70 +165,89 @@ public class Intake extends SubsystemBase {
   public boolean IntakeTest() {
     return intakeTest;
   }
+  //#endregion
 
-  public void setLowerLimit() {
-    /*if (lowerLimit = true) {
-      actuatorController.setSetpoint()    // Stops the actuator
-    } else {*/
-      moveIntakeTest();    // Moves the actuator into place
-    // }
-  }
+  // public void setLowerLimit() {
+  //   if (lowerLimit == true) {
+  //     actuatorController.setSetpoint()    // Stops the actuator
+  //   } else {
+  //   moveIntakeTest();    // Moves the actuator into place
+  //    }
+  // }
 
-  public void moveIntake(double target){
-    /*if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
-    DriverStation.reportWarning("Invalid intake target: " + target, false);
-    return;
-  }*/
-  actuatorController.setSetpoint(target, ControlType.kMAXMotionPositionControl);
+  public void moveIntake(Rotation2d target){
+  //   if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
+  //   DriverStation.reportWarning("Invalid intake target: " + target, false);
+  //   return;
+  // }
+  actuatorController.setSetpoint(target.getRotations(), ControlType.kPosition);
   }
 
   public void runIntake(double rpm){
     endEffectorController.setSetpoint(rpm, ControlType.kVelocity);
   }
 
-  public Command intakeManualCommand(){
-    return new StartEndCommand(
-      () -> runIntake(200),
-      () -> runIntake(0)
-    );
-  }
-
-  public Command intakeCommand(){
+  public Command intakeCycleCommand(){
     return new StartEndCommand(
     () -> { 
-      moveIntake(0);
-      runIntake(200); 
+      moveIntake(Rotation2d.fromDegrees(0));
+      //runIntake(200); 
         },
     () -> {
-      runIntake(0);
-      moveIntake(-90);
+      //runIntake(0);
+      moveIntake(Rotation2d.fromDegrees(-40));
         }
     );
   }
-  //Make Better Intake Sequence
 
-  public Command moveIntakeTest() {
+
+  // public Command moveIntakeTest() {
+  //   return new StartEndCommand(
+  //   () ->  moveIntake(Rotation2d.fromDegrees(0))
+  //     //intakeTest = true;    // Added for troubleshooting (03/09/26)
+  //      ,
+  //   () ->  moveIntake(Rotation2d.fromDegrees(120)),
+  //     this
+  //   );
+  // } Issue Fixed After Andy Blessed the Robot (The manipulator was calling the same config)
+
+  public Command runIntakeCommand(double RPM){
     return new StartEndCommand(
-    () -> { 
-      moveIntake(0);
-      intakeTest = true;    // Added for troubleshooting (03/09/26)
-        },
-    () -> {
-      moveIntake(-90/360);
-        }
+    () -> runIntake(RPM),
+    () -> runIntake(0),
+    this
     );
   }
 
   @Override
   public void periodic() {
-    boolean atLimit = isAtLimit();
-    /*if(atLimit && !wasAtLimit){   // Commented for troubleshooting (03/10/26)
-      actuator.getEncoder().setPosition(0);
-    }*/
-    wasAtLimit = atLimit;
+    boolean atBottomLimit = getBottomLimitState();
+    boolean atTopLimit = getTopLimitState();
 
-    lowerLimitPub.set(LowerLimit());
-    upperLimitPub.set(UpperLimit());
+    if(atBottomLimit) {
+      if(!wasAtBottomLimit) {
+        actuator.getEncoder().setPosition(-90);
+        actuatorController.setSetpoint(-90, ControlType.kPosition);
+      }
+      if (actuator.get() < 0) { actuator.stopMotor(); }
+    }
+
+    if(atTopLimit) {
+      if(!wasAtTopLimit) {
+        actuator.getEncoder().setPosition(0);
+        actuatorController.setSetpoint(0, ControlType.kPosition);
+      }
+      if (actuator.get() > 0) { actuator.stopMotor(); }
+    }
+
+    wasAtTopLimit = atTopLimit;
+    wasAtBottomLimit = atBottomLimit;
+    
+
+
+    //Network Table Publishers
+    lowerLimitPub.set(getBottomLimitState());
+    upperLimitPub.set(getTopLimitState());
     intakeActuatorAnglePub.set(Math.toDegrees(actuator.getEncoder().getPosition()));
     intakeActuatorAbsoluteAnglePub.set(Math.toDegrees(actuator.getAbsoluteEncoder().getPosition()));
 

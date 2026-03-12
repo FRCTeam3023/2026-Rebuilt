@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.Indexer;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Shooter;
 import frc.robot.Util.PIDDisplay;
@@ -19,6 +20,7 @@ public class RobotContainer {
   private static final ShooterSolver shootersolver = new ShooterSolver(drivetrain);
   private static final Shooter shooter = new Shooter(shootersolver, drivetrain);
   private static final Intake intake = new Intake();
+  private static final Indexer indexer = new Indexer();
   //private static final Limelight limelight = new Limelight();
 
   SendableChooser<Command> autoChooser;
@@ -29,7 +31,7 @@ public class RobotContainer {
     new PIDDisplay();
     new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain, shooter, intake);
+    ControlPanel.configureBinding(drivetrain, shooter, intake, indexer);
     configureAuto();
 
     PIDDisplay.Init();

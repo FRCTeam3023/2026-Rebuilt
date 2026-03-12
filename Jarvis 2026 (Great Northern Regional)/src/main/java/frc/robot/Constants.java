@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -35,9 +36,9 @@ public class Constants {
         // TURN_BACK_LEFT(7),
         // TURN_BACK_RIGHT(8),
 
-        SHOOTER_MOTOR(9),
+        SHOOTER_MOTOR(9),//9
         INDEX_MOTOR(10),
-        INTAKE_ACTUATOR(11),
+        INTAKE_ACTUATOR(11),//11
         INTAKE_MOTOR(12),
        //AGITATOR_MOTOR(13),
         SHOOTER_MOTOR_2(14),
@@ -63,8 +64,11 @@ public class Constants {
     }
 
     public static class INTAKE {
-        public static double MANIPULATOR_GEAR_RATIO = 9;
+        public static double MANIPULATOR_GEAR_RATIO = 3 * 3;
         public static double ACTUATOR_GEAR_RATIO = 3 * 9;       // Will eventually be changed to 81
+
+        public static Rotation2d ACTUATOR_TOP_LIMIT = Rotation2d.fromDegrees(0);
+        public static Rotation2d ACTUATOR_BOTTOM_LIMIT = Rotation2d.fromDegrees(-90);
     }
 
     public static class HUB{
@@ -92,8 +96,8 @@ public class Constants {
         public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 1);
 
 
-        public static Gains INTAKE_ACTUATOR = new Gains(0.002, 0, 0, .00018, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
-        public static Gains INTAKE_MANIPULATOR = new Gains(.0002, 0, 0, .0005, 1);
+        public static Gains INTAKE_ACTUATOR = new Gains(3, 0, 0, 2.5, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
+        public static Gains INTAKE_MANIPULATOR = new Gains(.0018, 0, 0, .001, 1);
     }
 
     public static class DrivetrainConstants {

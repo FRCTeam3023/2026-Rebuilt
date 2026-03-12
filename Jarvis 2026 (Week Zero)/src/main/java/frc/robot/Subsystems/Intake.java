@@ -6,6 +6,8 @@ package frc.robot.Subsystems;
 
 
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -16,6 +18,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,8 +63,8 @@ public class Intake extends SubsystemBase {
     .positionWrappingEnabled(false)
     .outputRange(-Constants.GAINS.INTAKE_ACTUATOR.peakOutput, Constants.GAINS.INTAKE_ACTUATOR.peakOutput);
     actuatorConfig.softLimit
-    .reverseSoftLimit(90)
-    .forwardSoftLimit(actuatorEncoderOffset)
+    //.reverseSoftLimit(Rotation2d.fromDegrees(90))
+    //.forwardSoftLimit(actuatorEncoderOffset)
     .reverseSoftLimitEnabled(true)
     .forwardSoftLimitEnabled(true);
 
