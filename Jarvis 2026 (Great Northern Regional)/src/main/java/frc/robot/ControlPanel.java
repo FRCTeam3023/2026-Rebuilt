@@ -59,7 +59,7 @@ public class ControlPanel {
         new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand()); //Home Command for Swerve | Back
         new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU())); //Gyro Reset for Swerve | Start
 
-        new JoystickButton(controller, 1).whileTrue(intake.moveIntakeTest()); // A
+        // new JoystickButton(controller, 1).whileTrue(intake.moveIntakeTest()); // A
         }
 
 

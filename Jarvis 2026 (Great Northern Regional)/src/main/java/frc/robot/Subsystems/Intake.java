@@ -59,8 +59,8 @@ public class Intake extends SubsystemBase {
   private DoublePublisher intakeActuatorAbsoluteAnglePub;
 
   // Added for troubleshooting (03/09/26)
-  private boolean intakeTest = false;
-  private BooleanPublisher intakeTestPub;
+  /*private boolean intakeTest = false;
+  private BooleanPublisher intakeTestPub;*/
 
   /** Creates a new Intake. */
   public Intake() {
@@ -117,13 +117,13 @@ public class Intake extends SubsystemBase {
     // Network tables
     inst = NetworkTableInstance.getDefault();
     intakeTable = inst.getTable("Elastic/Intake");
-    lowerLimitPub = intakeTable.getBooleanTopic("Lower limit switch").publish();
-    upperLimitPub = intakeTable.getBooleanTopic("Upper limit switch").publish();
-    intakeActuatorAnglePub = intakeTable.getDoubleTopic("Intake actuator angle").publish();
-    intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Intake actuator absolute angle").publish();
+    lowerLimitPub = intakeTable.getBooleanTopic("Lower Limit").publish();
+    upperLimitPub = intakeTable.getBooleanTopic("Upper Limit").publish();
+    intakeActuatorAnglePub = intakeTable.getDoubleTopic("Actuator angle").publish();
+    intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Actuator abs. angle").publish();
 
     // Added for troubleshooting (03/09/26)
-    intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
+    // intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
   }
 
   public boolean isAtLimit() {
@@ -149,17 +149,17 @@ public class Intake extends SubsystemBase {
     return intakeActuatorAbsoluteAngle;
   }
 
-  public boolean IntakeTest() {
+  /*public boolean IntakeTest() {
     return intakeTest;
-  }
+  }*/
 
-  public void setLowerLimit() {
-    /*if (lowerLimit = true) {
+  /*public void setLowerLimit() {
+    if (lowerLimit = true) {
       actuatorController.setSetpoint()    // Stops the actuator
-    } else {*/
+    } else {
       moveIntakeTest();    // Moves the actuator into place
     // }
-  }
+  }*/
 
   public void moveIntake(double target){
     /*if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
@@ -195,7 +195,7 @@ public class Intake extends SubsystemBase {
   //Make Better Intake Sequence
 
   // Added for troubleshooting (03/09/26)
-  public Command moveIntakeTest() {
+  /*public Command moveIntakeTest() {
     return new StartEndCommand(
     () -> { 
       moveIntake(0);
@@ -205,7 +205,7 @@ public class Intake extends SubsystemBase {
       moveIntake(-90/360);
         }
     );
-  }
+  }*/
 
   @Override
   public void periodic() {
@@ -220,6 +220,6 @@ public class Intake extends SubsystemBase {
     intakeActuatorAnglePub.set(Math.toDegrees(actuator.getEncoder().getPosition()));
     intakeActuatorAbsoluteAnglePub.set(Math.toDegrees(actuator.getAbsoluteEncoder().getPosition()));
 
-    intakeTestPub.set(IntakeTest());
+    // intakeTestPub.set(IntakeTest());
   }
 }

@@ -57,6 +57,8 @@ public class Shooter extends SubsystemBase {
   // Network tables
   private boolean shooterMotors = false;
   private BooleanPublisher shooterMotorsPub;
+  private boolean indexerEnabled = false;
+  private BooleanPublisher indexerEnabledPub;
 
   public Shooter(ShooterSolver shooterSolver, Drivetrain drivetrain) {
     this.shooterSolver = shooterSolver;
@@ -136,7 +138,8 @@ public class Shooter extends SubsystemBase {
     // Network tables
     inst = NetworkTableInstance.getDefault();
     shooterTable = inst.getTable("Elastic/Shooter");
-    shooterMotorsPub = shooterTable.getBooleanTopic("Shooter motors running").publish();
+    shooterMotorsPub = shooterTable.getBooleanTopic("Shooter On").publish();
+    indexerEnabledPub = shooterTable.getBooleanTopic("Indexer On").publish();
   }
 
   public void setShooterVelocity(double rpm){
@@ -150,6 +153,10 @@ public class Shooter extends SubsystemBase {
   
   public boolean ShooterMotors() {
     return shooterMotors;
+  }
+
+  public boolean IndexerEnabled() {
+    return indexerEnabled;
   }
 
   public Command shootCommand() {
@@ -198,9 +205,16 @@ public class Shooter extends SubsystemBase {
       
   public Command manualIndexCommand() {
     return new StartEndCommand(
-      () -> setIndexVelocity(40),
-      () -> setIndexVelocity(0)
-      );
+      () -> {
+        setIndexVelocity(40);
+        indexerEnabled = true;
+        },
+      () -> 
+      {
+        setIndexVelocity(0);
+        indexerEnabled = false;
+      }
+    );
   }
 
 
@@ -209,5 +223,6 @@ public class Shooter extends SubsystemBase {
     velocityEntry.setDouble(shooter.getEncoder().getVelocity());
 
     shooterMotorsPub.set(ShooterMotors());
+    indexerEnabledPub.set(IndexerEnabled());
   }
 }
