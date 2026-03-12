@@ -190,12 +190,12 @@ public class Intake extends SubsystemBase {
   public Command intakeCycleCommand(){
     return new StartEndCommand(
     () -> { 
-      moveIntake(Rotation2d.fromDegrees(0));
+      moveIntake(Rotation2d.fromDegrees(90));
       //runIntake(200); 
         },
     () -> {
       //runIntake(0);
-      moveIntake(Rotation2d.fromDegrees(-40));
+      moveIntake(Rotation2d.fromDegrees(0));
         }
     );
   }
@@ -226,16 +226,16 @@ public class Intake extends SubsystemBase {
 
     if(atBottomLimit) {
       if(!wasAtBottomLimit) {
-        actuator.getEncoder().setPosition(-90);
-        actuatorController.setSetpoint(-90, ControlType.kPosition);
+        actuator.getEncoder().setPosition(Rotation2d.fromDegrees(90).getRotations()); //0.25
+        actuatorController.setSetpoint(Rotation2d.fromDegrees(90).getRotations(), ControlType.kPosition); //0.25
       }
       if (actuator.get() < 0) { actuator.stopMotor(); }
     }
 
     if(atTopLimit) {
       if(!wasAtTopLimit) {
-        actuator.getEncoder().setPosition(0);
-        actuatorController.setSetpoint(0, ControlType.kPosition);
+        actuator.getEncoder().setPosition(Rotation2d.fromDegrees(0).getRotations()); //0
+        actuatorController.setSetpoint(Rotation2d.fromDegrees(0).getRotations(), ControlType.kPosition); //0
       }
       if (actuator.get() > 0) { actuator.stopMotor(); }
     }

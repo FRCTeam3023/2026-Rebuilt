@@ -40,7 +40,7 @@ public class Constants {
         INDEX_MOTOR(10),
         INTAKE_ACTUATOR(11),//11
         INTAKE_MOTOR(12),
-       //AGITATOR_MOTOR(13),
+        AGITATOR_MOTOR(13),
         SHOOTER_MOTOR_2(14),
         ROBORIO(0),
         PIGEON_2(20);
@@ -61,6 +61,10 @@ public class Constants {
 
     public static class INDEXER {
         public static double GEAR_RATIO = 9;
+    }
+
+    public static class AGITATOR {
+        public static double GEAR_RATIO = 0;
     }
 
     public static class INTAKE {
@@ -93,8 +97,7 @@ public class Constants {
         public static Gains SHOOTER = new Gains(0.002, 0, 0, .00018 ,1.0);
         public static Gains INDEXER = new Gains(0, 0, 0, 0, 1);   
 
-        public static Gains AGITATOR = new Gains(0, 0, .05, 0.00018, 1);
-
+        public static Gains AGITATOR = new Gains(0.002, 0, 0, 0.00018, 1);
 
         public static Gains INTAKE_ACTUATOR = new Gains(3, 0, 0, 2.5, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
         public static Gains INTAKE_MANIPULATOR = new Gains(.0018, 0, 0, .001, 1);
