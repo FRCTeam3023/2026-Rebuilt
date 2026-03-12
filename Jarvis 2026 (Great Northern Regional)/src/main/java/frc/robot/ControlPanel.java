@@ -16,11 +16,9 @@ import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Shooter;
 
 public class ControlPanel {
-    private static  Joystick controller = new Joystick(0);
-    //private static  PS4Controller PS4_CONTROLLER = new PS4Controller(0);
-   
-
-    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Control Panel");
+    private static final Joystick controller = new Joystick(0);
+    
+    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/Control Panel");
 
     private static Drivetrain drivetrain;
 
@@ -68,8 +66,8 @@ public class ControlPanel {
         new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand()); // BACK | Home Command for Swerve
         new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU())); // START | Gyro Reset for Swerve
 
-        //new JoystickButton(controller, 2).whileTrue(intake.moveIntakeTest());
-          }
+        // new JoystickButton(controller, 1).whileTrue(intake.moveIntakeTest()); // A
+        }
 
 
 

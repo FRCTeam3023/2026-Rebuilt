@@ -19,6 +19,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,9 +33,10 @@ import frc.robot.Util.SparkBaseSetter;
 
 public class Shooter extends SubsystemBase {
 
-  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Shooter");
+  private NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Elastic/Shooter");
+  private NetworkTableInstance inst;
 
-  private final GenericEntry velocityEntry = nTable.getTopic("Shooter Velocity").getGenericEntry();
+  private final GenericEntry velocityEntry = shooterTable.getTopic("Shooter Velocity").getGenericEntry();
 
   private ShooterSolver shooterSolver;
   private Drivetrain drivetrain;
@@ -48,9 +50,15 @@ public class Shooter extends SubsystemBase {
 
   private final PIDController aimPID = new PIDController(5, 0, 0);
 
-    public Shooter(ShooterSolver shooterSolver, Drivetrain drivetrain) {
-      this.shooterSolver = shooterSolver;
-      this.drivetrain = drivetrain;
+  // Network tables
+  private boolean shooterMotors = false;
+  private BooleanPublisher shooterMotorsPub;
+  private boolean indexerEnabled = false;
+  private BooleanPublisher indexerEnabledPub;
+
+  public Shooter(ShooterSolver shooterSolver, Drivetrain drivetrain) {
+    this.shooterSolver = shooterSolver;
+    this.drivetrain = drivetrain;
 
     shooter = new SparkFlex(Constants.CAN_DEVICES.SHOOTER_MOTOR.id, MotorType.kBrushless);
     shooter2 = new SparkFlex(Constants.CAN_DEVICES.SHOOTER_MOTOR_2.id, MotorType.kBrushless);
@@ -101,7 +109,12 @@ public class Shooter extends SubsystemBase {
 
     aimPID.enableContinuousInput(-Math.PI, Math.PI);
     aimPID.setTolerance(Math.toRadians(1.5)); // stop jittering
-
+    
+    // Network tables
+    inst = NetworkTableInstance.getDefault();
+    shooterTable = inst.getTable("Elastic/Shooter");
+    shooterMotorsPub = shooterTable.getBooleanTopic("Shooter On").publish();
+    indexerEnabledPub = shooterTable.getBooleanTopic("Indexer On").publish();
   }
 
   public void setShooterVelocity(double rpm){
@@ -110,12 +123,25 @@ public class Shooter extends SubsystemBase {
   }
   
   
+  public boolean ShooterMotors() {
+    return shooterMotors;
+  }
+
+  public boolean IndexerEnabled() {
+    return indexerEnabled;
+  }
+
   public Command shootCommand() {
-      return new StartEndCommand(
-        () -> setShooterVelocity(3600),
-        // () -> setShooterVelocity(Constants.SHOOTER.NOMINAL_RPM)
-        () -> setShooterVelocity(0)
-        );
+    return new StartEndCommand(
+    () -> { 
+      setShooterVelocity(3600);
+      shooterMotors = true; 
+        },
+    () -> {
+      setShooterVelocity(0);
+      shooterMotors = false; 
+        }
+    );
   }
 
   
@@ -155,6 +181,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     velocityEntry.setDouble(shooter.getEncoder().getVelocity());
-    // This method will be called once per scheduler run
+
+    shooterMotorsPub.set(ShooterMotors());
+    indexerEnabledPub.set(IndexerEnabled());
   }
 }

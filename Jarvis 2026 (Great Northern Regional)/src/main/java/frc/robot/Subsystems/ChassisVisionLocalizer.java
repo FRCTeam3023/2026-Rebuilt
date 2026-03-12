@@ -123,7 +123,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     }
   }
 
-  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Vision");
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/Drivetrain/Vision");
 
   private final GenericEntry enabledEntry = nTable.getTopic("Enabled").getGenericEntry();
   private final GenericEntry calibrationEntry = nTable.getTopic("Calibration Index").getGenericEntry();

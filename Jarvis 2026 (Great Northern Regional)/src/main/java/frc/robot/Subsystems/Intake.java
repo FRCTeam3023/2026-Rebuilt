@@ -59,15 +59,15 @@ public class Intake extends SubsystemBase {
   private double intakeActuatorAbsoluteAngle = 0;
 
   private NetworkTableInstance inst;
-  private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
+  private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Elastic/Intake");
   private BooleanPublisher lowerLimitPub;
   private BooleanPublisher upperLimitPub;
   private DoublePublisher intakeActuatorAnglePub;
   private DoublePublisher intakeActuatorAbsoluteAnglePub;
 
   // Added for troubleshooting (03/09/26)
-  private boolean intakeTest = false;
-  private BooleanPublisher intakeTestPub;
+  /*private boolean intakeTest = false;
+  private BooleanPublisher intakeTestPub;*/
 
   /** Creates a new Intake. */
   public Intake() {
@@ -129,14 +129,14 @@ public class Intake extends SubsystemBase {
 
     // Network tables
     inst = NetworkTableInstance.getDefault();
-    intakeTable = inst.getTable("Limit Switches");
-    lowerLimitPub = intakeTable.getBooleanTopic("Lower limit switch").publish();
-    upperLimitPub = intakeTable.getBooleanTopic("Upper limit switch").publish();
-    intakeActuatorAnglePub = intakeTable.getDoubleTopic("Intake actuator angle").publish();
-    intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Intake actuator absolute angle").publish();
+    intakeTable = inst.getTable("Elastic/Intake");
+    lowerLimitPub = intakeTable.getBooleanTopic("Lower Limit").publish();
+    upperLimitPub = intakeTable.getBooleanTopic("Upper Limit").publish();
+    intakeActuatorAnglePub = intakeTable.getDoubleTopic("Actuator angle").publish();
+    intakeActuatorAbsoluteAnglePub = intakeTable.getDoubleTopic("Actuator abs. angle").publish();
 
     // Added for troubleshooting (03/09/26)
-    intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
+    // intakeTestPub = intakeTable.getBooleanTopic("Intake test").publish();
   }
 
   //#region Network Table Setters
@@ -217,7 +217,7 @@ public class Intake extends SubsystemBase {
     () -> runIntake(0),
     this
     );
-  }
+  }*/
 
   @Override
   public void periodic() {
@@ -251,6 +251,6 @@ public class Intake extends SubsystemBase {
     intakeActuatorAnglePub.set(Math.toDegrees(actuator.getEncoder().getPosition()));
     intakeActuatorAbsoluteAnglePub.set(Math.toDegrees(actuator.getAbsoluteEncoder().getPosition()));
 
-    intakeTestPub.set(IntakeTest());
+    // intakeTestPub.set(IntakeTest());
   }
 }

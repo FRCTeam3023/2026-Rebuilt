@@ -23,7 +23,7 @@ public class PIDDisplay extends SubsystemBase{
     public static final SendableChooser<PIDSetter> PIDList = new SendableChooser<>();
     public static final WPILibSetter defaultPID = new WPILibSetter(List.of(new PIDController(0, 0, 0)));
 
-    private static NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/PID Display");
+    private static NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/PID Display");
 
     private static GenericEntry PEntry = nTable.getTopic("P").getGenericEntry();
     private static GenericEntry IEntry = nTable.getTopic("I").getGenericEntry();

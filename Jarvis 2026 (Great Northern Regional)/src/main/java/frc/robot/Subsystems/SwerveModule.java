@@ -52,7 +52,7 @@ public class SwerveModule {
     public static final TalonFXSetter driveSetters = new TalonFXSetter();
     public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
 
-    private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Swerve/Modules");
+    private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/Drivetrain/Swervedrive/Modules");
     private final GenericEntry homedEntry, switchEntry;
 
     /**
