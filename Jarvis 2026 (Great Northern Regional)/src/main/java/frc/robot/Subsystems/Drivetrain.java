@@ -61,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
   private final Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModuleConstants.MODULE_POSITIONS);
   private static SwerveDrivePoseEstimator poseEstimator;
-  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain");
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/Drivetrain");
 
   private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 

@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
   private double intakeActuatorAbsoluteAngle = 0;
 
   private NetworkTableInstance inst;
-  private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
+  private NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Elastic/Intake");
   private BooleanPublisher lowerLimitPub;
   private BooleanPublisher upperLimitPub;
   private DoublePublisher intakeActuatorAnglePub;
@@ -116,7 +116,7 @@ public class Intake extends SubsystemBase {
 
     // Network tables
     inst = NetworkTableInstance.getDefault();
-    intakeTable = inst.getTable("Limit Switches");
+    intakeTable = inst.getTable("Elastic/Intake");
     lowerLimitPub = intakeTable.getBooleanTopic("Lower limit switch").publish();
     upperLimitPub = intakeTable.getBooleanTopic("Upper limit switch").publish();
     intakeActuatorAnglePub = intakeTable.getDoubleTopic("Intake actuator angle").publish();
@@ -194,11 +194,12 @@ public class Intake extends SubsystemBase {
   }
   //Make Better Intake Sequence
 
+  // Added for troubleshooting (03/09/26)
   public Command moveIntakeTest() {
     return new StartEndCommand(
     () -> { 
       moveIntake(0);
-      intakeTest = true;    // Added for troubleshooting (03/09/26)
+      intakeTest = true;
         },
     () -> {
       moveIntake(-90/360);

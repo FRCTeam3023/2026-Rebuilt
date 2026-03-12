@@ -17,7 +17,7 @@ import frc.robot.Subsystems.Shooter;
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     
-    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Control Panel");
+    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Elastic/Control Panel");
 
     private static Drivetrain drivetrain;
 
