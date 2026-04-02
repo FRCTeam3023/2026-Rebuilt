@@ -6,6 +6,7 @@ package frc.robot.Subsystems;
 
 
 
+import java.time.Instant;
 import java.util.ResourceBundle.Control;
 
 import com.revrobotics.spark.FeedbackSensor;
@@ -28,9 +29,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
@@ -98,7 +103,7 @@ public class Intake extends SubsystemBase {
     // .forwardSoftLimitEnabled(true);
     actuatorConfig.closedLoop.maxMotion
     .maxAcceleration(4)
-    .maxVelocity(40);
+    .maxVelocity(45);
     
     
 
@@ -162,9 +167,9 @@ public class Intake extends SubsystemBase {
     return intakeActuatorAbsoluteAngle;
   }
 
-  public boolean IntakeTest() {
-    return intakeTest;
-  }
+  // public boolean IntakeTest() {
+  //   return intakeTest;
+  // }
   //#endregion
 
   // public void setLowerLimit() {
@@ -176,10 +181,10 @@ public class Intake extends SubsystemBase {
   // }
 
   public void moveIntake(Rotation2d target){
-  //   if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
-  //   DriverStation.reportWarning("Invalid intake target: " + target, false);
-  //   return;
-  // }
+     //if(target > 0 || target < -90){   // Commented for troubleshooting (03/10/26)
+  //    DriverStation.reportWarning("Invalid intake target: " + target, false);
+  //    return;
+  //  }
   actuatorController.setSetpoint(target.getRotations(), ControlType.kPosition);
   }
 
@@ -190,34 +195,58 @@ public class Intake extends SubsystemBase {
   public Command intakeCycleCommand(){
     return new StartEndCommand(
     () -> { 
-      moveIntake(Rotation2d.fromDegrees(90));
-      //runIntake(200); 
+      moveIntake(Rotation2d.fromRotations(.54));
+      runIntake(3000); 
         },
     () -> {
       //runIntake(0);
-      moveIntake(Rotation2d.fromDegrees(0));
+      endEffector.set(0);
+      moveIntake(Rotation2d.fromRotations(0));
         }
     );
   }
 
+  public Command runEndEffectorCommand(){
+    return new StartEndCommand(
+    () -> { 
+      runIntake(3000); 
+        },
+    () -> {
+      endEffector.set(0);
+        }
+    );
+  }
 
+  public Command intakeOutCommand(){
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> endEffectorConfig.idleMode(IdleMode.kCoast)),
+      new InstantCommand(() -> moveIntake(Rotation2d.fromRotations(.53))),
+      new WaitUntilCommand(() -> actuator.getEncoder().getPosition() > .45),
+      new InstantCommand(() -> endEffectorConfig.idleMode(IdleMode.kBrake))
+    );
+    }
+
+  public Command intakeInCommand(){
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> endEffectorConfig.idleMode(IdleMode.kCoast)),
+      new InstantCommand(() -> moveIntake(Rotation2d.fromRotations(0))),
+      new WaitUntilCommand(() -> actuator.getEncoder().getPosition() < .2),
+      new InstantCommand(() -> endEffectorConfig.idleMode(IdleMode.kBrake))
+    );
+  }
+
+  // Added for troubleshooting (03/09/26)
   // public Command moveIntakeTest() {
   //   return new StartEndCommand(
-  //   () ->  moveIntake(Rotation2d.fromDegrees(0))
-  //     //intakeTest = true;    // Added for troubleshooting (03/09/26)
-  //      ,
-  //   () ->  moveIntake(Rotation2d.fromDegrees(120)),
-  //     this
+  //   () -> { 
+  //     moveIntake(0);
+  //     intakeTest = true;
+  //       },
+  //   () -> {
+  //     moveIntake(-90/360);
+  //       }
   //   );
-  // } Issue Fixed After Andy Blessed the Robot (The manipulator was calling the same config)
-
-  public Command runIntakeCommand(double RPM){
-    return new StartEndCommand(
-    () -> runIntake(RPM),
-    () -> runIntake(0),
-    this
-    );
-  }*/
+  // }
 
   @Override
   public void periodic() {
@@ -226,16 +255,16 @@ public class Intake extends SubsystemBase {
 
     if(atBottomLimit) {
       if(!wasAtBottomLimit) {
-        actuator.getEncoder().setPosition(Rotation2d.fromDegrees(90).getRotations()); //0.25
-        actuatorController.setSetpoint(Rotation2d.fromDegrees(90).getRotations(), ControlType.kPosition); //0.25
+        actuator.getEncoder().setPosition(Rotation2d.fromRotations(.53).getRotations()); //0.25
+        actuatorController.setSetpoint(Rotation2d.fromRotations(.53).getRotations(), ControlType.kPosition); //0.25
       }
       if (actuator.get() < 0) { actuator.stopMotor(); }
     }
 
     if(atTopLimit) {
       if(!wasAtTopLimit) {
-        actuator.getEncoder().setPosition(Rotation2d.fromDegrees(0).getRotations()); //0
-        actuatorController.setSetpoint(Rotation2d.fromDegrees(0).getRotations(), ControlType.kPosition); //0
+        actuator.getEncoder().setPosition(Rotation2d.fromRotations(0).getRotations()); //0
+        actuatorController.setSetpoint(Rotation2d.fromRotations(0).getRotations(), ControlType.kPosition); //0
       }
       if (actuator.get() > 0) { actuator.stopMotor(); }
     }

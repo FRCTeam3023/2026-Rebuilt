@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Start, Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
+            "pathName": "Center Start"
           }
         }
       ]

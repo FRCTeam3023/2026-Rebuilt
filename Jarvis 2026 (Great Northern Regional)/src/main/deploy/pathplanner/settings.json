@@ -4,9 +4,6 @@
   "holonomicMode": true,
   "pathFolders": [
     "Leave Paths",
-    "Lineup Paths",
-    "Station to Reef",
-    "Reef to Station",
     "Init Center",
     "Init Left",
     "Init Right"

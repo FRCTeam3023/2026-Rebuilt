@@ -4,6 +4,7 @@
 
 package frc.robot.Subsystems;
 
+import com.ctre.phoenix6.signals.ControlModeValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -13,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -33,13 +35,15 @@ public class Indexer extends SubsystemBase {
   public Indexer() {
 
     indexer = new SparkMax(Constants.CAN_DEVICES.INDEX_MOTOR.id, MotorType.kBrushless);
+    agitator = new SparkMax(Constants.CAN_DEVICES.AGITATOR_MOTOR.id, MotorType.kBrushless);
 
     indexerController = indexer.getClosedLoopController();
+    agitatorController = agitator.getClosedLoopController();
 
     //Indexer motor controller config
     indexerConfig = new SparkMaxConfig();
     indexerConfig
-    .inverted(false)
+    .inverted(true)
     .idleMode(IdleMode.kBrake)
     .smartCurrentLimit(38)
     .voltageCompensation(12);
@@ -56,17 +60,54 @@ public class Indexer extends SubsystemBase {
     indexerSetter.setPID(Constants.GAINS.INDEXER);
     PIDDisplay.PIDList.addOption("Indexer", indexerSetter);
 
+
+
+     //Agitator motor controller config
+    agitatorConfig = new SparkMaxConfig();
+    agitatorConfig
+    .inverted(false)
+    .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(38)
+    .voltageCompensation(12);
+    agitatorConfig.encoder
+    .positionConversionFactor(1.0/Constants.AGITATOR.GEAR_RATIO)
+    .velocityConversionFactor(1.0/Constants.AGITATOR.GEAR_RATIO);
+    agitatorConfig.closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    .positionWrappingEnabled(false)
+    .outputRange(-Constants.GAINS.INDEXER.peakOutput, Constants.GAINS.INDEXER.peakOutput);
+
+    //makes the PID values accesible to elastic for testing
+    SparkBaseSetter agitatorSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(agitator, agitatorConfig));
+    agitatorSetter.setPID(Constants.GAINS.AGITATOR);
+    PIDDisplay.PIDList.addOption("Agitator", agitatorSetter);
+
   }
 
    public void setIndexVelocity(double rpm){
     indexerController.setSetpoint(rpm, ControlType.kVelocity);
   }
 
-   public Command runIndexCommand(double RPM) {
-    return new StartEndCommand(
-      () -> setIndexVelocity(RPM),
-      () -> setIndexVelocity(0)
-      );
+  public void setAgitatorVelocity(double rpm){
+    agitatorController.setSetpoint(rpm, ControlType.kVelocity);
+  }
+
+   public Command setIndexVelocityCommand(double indexRPM) {
+   return new StartEndCommand(
+  () -> {
+    setIndexVelocity(indexRPM);
+  },
+  () -> {
+    indexer.set(0);
+  },
+  this
+);
+}
+
+  public Command runIndexCommand(double RPM) {
+    return new InstantCommand(
+      () -> setIndexVelocity(RPM)
+    );
   }
 
   @Override

@@ -40,9 +40,9 @@ public class Constants {
         INDEX_MOTOR(10),
         INTAKE_ACTUATOR(11),//11
         INTAKE_MOTOR(12),
-        AGITATOR_MOTOR(13),
+        AGITATOR_MOTOR(32),
         SHOOTER_MOTOR_2(14),
-        ROBORIO(0),
+        ROBORIO(0), 
         PIGEON_2(20);
 
         public int id;
@@ -54,9 +54,10 @@ public class Constants {
     public static class SHOOTER {
         public static double GEAR_RATIO = 1;
         public static double NOMINAL_RPM = 1500;
-        public static double VEL_TO_RPM = 1;
+        public static double VEL_TO_RPM = 2;
         public static double SHOOTER_ANGLE = 70;
         public static double SHOOTER_HEIGHT = Units.inchesToMeters(15);
+        public static double TALON_PEAK_OUTPUT = 12;
     }
 
     public static class INDEXER {
@@ -64,7 +65,7 @@ public class Constants {
     }
 
     public static class AGITATOR {
-        public static double GEAR_RATIO = 0;
+        public static double GEAR_RATIO = 1;
     }
 
     public static class INTAKE {
@@ -94,19 +95,20 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
 
-        public static Gains SHOOTER = new Gains(0.002, 0, 0, .00018 ,1.0);
-        public static Gains INDEXER = new Gains(0, 0, 0, 0, 1);   
+        public static Gains SHOOTER = new Gains(0.01, 0.1, 0.1, .0006 ,1.0);
+
+        public static Gains INDEXER = new Gains(0.0004, 0, 0.1, 0.004, 1.0);   
 
         public static Gains AGITATOR = new Gains(0.002, 0, 0, 0.00018, 1);
 
-        public static Gains INTAKE_ACTUATOR = new Gains(3, 0, 0, 2.5, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
+        public static Gains INTAKE_ACTUATOR = new Gains(3, 0, 0.1, 2.8, 1.0);       // Original values: 2, 0, 0, 0, 1.0 (03/10/26)
         public static Gains INTAKE_MANIPULATOR = new Gains(.0018, 0, 0, .001, 1);
     }
 
     public static class DrivetrainConstants {
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
-        public static final double MAX_DRIVE_SPEED = 2;
-        public static final double MAX_ANGULAR_SPEED = 3;
+        public static final double MAX_DRIVE_SPEED = 1;
+        public static final double MAX_ANGULAR_SPEED = 1;
         public static final double ALIGN_CONTROL_MULTIPLIER = 0.2;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
     }
@@ -153,28 +155,12 @@ public class Constants {
             new Transform3d(
                 new Translation3d(0.36989407217844056, -0.34934358915182817, 0.1960746849609884), 
                 new Rotation3d(-0.009310973845960677, -0.46471606065446996, -0.049877760937597264)
-            ),
-            new Transform3d(
-                new Translation3d(-0.3341210310485878, 0.25044460157618835, 0.2325700723726466), 
-                new Rotation3d(0.023193918482595763, -0.5565355951577495, 3.0599241251685845)
-            ),
-            new Transform3d(
-                new Translation3d(-0.3531964431772765, -0.32643772352780843, 0.26445212888245784), 
-                new Rotation3d(0.061995396118376844, -0.6501071778295155, -3.0874453173905994)
             )
         };
 
-        public static final Transform3d ROBOT_TO_LIMELIGHT = 
-         new Transform3d(
-                new Translation3d(Units.inchesToMeters(27/2-.625), 0.0, Units.inchesToMeters(4.25)), // x forward, y left, z up (meters)
-                new Rotation3d(0, 0, 0) // camera rotation relative to robot
-         );
-
         public static final Transform3d[] CAMERAS_TO_ROBOT = {
             ROBOT_TO_CAMERAS[0].inverse(),
-            ROBOT_TO_CAMERAS[1].inverse(),
-            ROBOT_TO_CAMERAS[2].inverse(),
-            ROBOT_TO_CAMERAS[3].inverse()
+            ROBOT_TO_CAMERAS[1].inverse()
         };
 
         public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);

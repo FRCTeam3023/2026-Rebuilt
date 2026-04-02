@@ -1,12 +1,15 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Indexer;
@@ -16,6 +19,8 @@ import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.ShooterSolver;
 
 public class RobotContainer {
+
+
   private static final Drivetrain drivetrain = new Drivetrain();
   private static final ShooterSolver shootersolver = new ShooterSolver(drivetrain);
   private static final Shooter shooter = new Shooter(shootersolver, drivetrain);
@@ -28,18 +33,25 @@ public class RobotContainer {
   private static boolean isBlue = false;
 
   public RobotContainer() {
-    new PIDDisplay();
-    new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain, shooter, intake, indexer);
-    configureAuto();
+     NamedCommands.registerCommand("Robot Auto Shoot", shooter.autoAimCommand(() -> 0.0, () -> 0.0));
+     NamedCommands.registerCommand("Index", indexer.setIndexVelocityCommand(300)); 
 
-    PIDDisplay.Init();
-    
-    Ultrasonic.setAutomaticMode(true);
-  }
-
-  public static boolean isBlue() {
+      
+      
+      
+          new PIDDisplay();
+          new ChassisVisionLocalizer();
+      
+          ControlPanel.configureBinding(drivetrain, shooter, intake, indexer);
+          configureAuto();
+      
+          PIDDisplay.Init();
+          
+          Ultrasonic.setAutomaticMode(true);
+        }
+      
+        public static boolean isBlue() {
     return isBlue;
   }
 
@@ -51,7 +63,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
       drivetrain.homeCommand(),
-      AutoBuilder.buildAuto(autoChooser.getSelected().getName())
+      AutoBuilder.buildAuto(autoChooser.getSelected().getName())  
     );
   }
 

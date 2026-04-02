@@ -3,15 +3,19 @@ package frc.robot;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.Shooter;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
+  private Shooter shooter;
+  private Drivetrain drivetrain;
   private RobotContainer m_robotContainer;
 
   @Override
@@ -51,7 +55,15 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    if (m_autonomousCommand != null) {
+        m_autonomousCommand.cancel();
+    }
+
+    // shooter.setShooterVelocity(0);
+    // drivetrain.drive(new ChassisSpeeds(0,0,0), true);
+
+  }
 
   @Override
   public void teleopInit() {

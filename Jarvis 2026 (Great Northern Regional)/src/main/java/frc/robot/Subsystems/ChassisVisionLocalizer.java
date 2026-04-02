@@ -138,9 +138,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
   private NavCam[] navCams = {
     new NavCam(0),
-    new NavCam(1),
-    new NavCam(2),
-    new NavCam(3)
+    new NavCam(1)
   };
 
   public ChassisVisionLocalizer() {
@@ -169,7 +167,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     }
 
     int currentIndex =(int)calibrationEntry.getInteger(-1);
-    if (previousIndex != currentIndex && currentIndex >= 0 && currentIndex <= 3) {
+    if (previousIndex != currentIndex && currentIndex >= 0 && currentIndex <= 1) {
       navCams[currentIndex].currentCalibrationEntry = 0;
       for (int i = 0; i < 7; i++) navCams[currentIndex].calibrationEntries[i] = 0;
     }

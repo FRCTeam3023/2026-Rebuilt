@@ -251,7 +251,8 @@ public class Drivetrain extends SubsystemBase {
    * @return The heading directly from the gyroscope
    */
   public Rotation2d getHeadingRaw() {
-    return Rotation2d.fromDegrees(IMU.getYaw().getValueAsDouble());
+    return Rotation2d.fromDegrees(IMU.getYaw().getValueAsDouble())
+    .plus(Rotation2d.fromDegrees(180));
   }
 
   public static void addVisionMeasurement(Pose2d visionPose, double timestamp){
